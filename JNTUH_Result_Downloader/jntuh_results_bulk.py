@@ -1,9 +1,11 @@
 #Python2.7.2
-'''Example: python jntu_results_bulk.py 08QQ1A04 1036 60'''
+'''Example: python jntu_results_bulk.py 08QQ1A04 1036 60 1'''
 import sys
 import httplib
 import string
 
+if len(sys.argv)>4: start = int(sys.argv[4])
+else: start = 1
 if len(sys.argv)>3: std_max = int(sys.argv[3])
 else: std_max = 60
 if len(sys.argv)>2: ecode = sys.argv[2]
@@ -44,7 +46,7 @@ def get_htno(htno, ecode):
     count = 0
     print data
 
-for i in xrange(1, std_max+1):
+for i in xrange(start, std_max+1):
     k = str(i)
     z = 10-(len(htno)+len(k))
     if z>0: k = htno+("0"*z)+k

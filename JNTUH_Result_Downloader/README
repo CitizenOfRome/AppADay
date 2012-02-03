@@ -1,6 +1,7 @@
-JNTUH Result downloader: Feb 2nd 2012
+JNTUH Result downloader: Feb 2nd/3rd 2012
 -----------------------
 This tool downloads the JNTUH exam-result given the Hallticket number and the Exam-Code.
+The bulk version downloads the results for a given class starting from htno:1 to the max specified, given the common part of their htno
 
 It primarily allivates the pain of having to manually reload the page for your results and allows for bulk-download...
 
