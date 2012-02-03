@@ -10,13 +10,14 @@ else: ecode = "1036"
 if len(sys.argv)>1: htno = sys.argv[-1]
 else: htno = "08QQ1A0449"
 
+conn = None
+resp = None
+
 def get_htno(htno, ecode):
     '''Gets the result HTML for the given HTNO and ECODE'''
     global conn, resp
-    conn = None
-    resp = None
     try:
-        global conn, resp
+        global conn, resp #for some reason, conn & resp don't exist out of try when not global
         conn = httplib.HTTPConnection("jntu.ac.in")
         conn.request("GET", "/results/htno/"+htno+"/"+ecode+"/index.html")
         resp = conn.getresponse()
