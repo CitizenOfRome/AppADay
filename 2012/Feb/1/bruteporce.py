@@ -1,3 +1,6 @@
+#Python2.7.2
+'''BruteForces passwords given the hashes'''
+'''Usage: Call the Brute function with a list of hashes and the required encryption function'''
 import hashlib
 from itertools import combinations
 import string
