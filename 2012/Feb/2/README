@@ -1,0 +1,17 @@
+JNTUH Result downloader: Feb 2nd 2012
+-----------------------
+This tool downloads the JNTUH exam-result given the Hallticket number and the Exam-Code.
+
+It primarily allivates the pain of having to manually reload the page for your results and allows for bulk-download...
+
+JNTUH recently updated its results page, probably to stop people from downloading results in bulk, but they made a few silly errors making the upgrade fruitless:
+
+1) Their Capcha-image-url has the capcha key
+2) They reveal a direct link to the results that bypasses all their "security" mechanisms
+
+These half-baked efforts only hurt the genuine users of the results page as they need to type-in a Capcha that doesn't load when the server is busy and an XHR request that is held up for the same reason thus denying them their results, while the "hackers" easily get past these "measures".
+
+So, if you are from JNTUH get your result directly through: http://jntu.ac.in/results/htno/08XXXXXXXX/1036
+(Format:http://jntu.ac.in/results/htno/"+htno+"/"+ecode)
+Licence: http://creativecommons.org/licenses/by-nc-sa/3.0/
+-----------------------
