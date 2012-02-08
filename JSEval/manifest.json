@@ -1,0 +1,11 @@
+{
+  "name": "JSEval",
+  "description": "Evaluates JavaScript from the OmniBox",
+  "version": "1.0",
+  "background_page": "background.html",
+  "omnibox": { "keyword" : "js" },
+  "permissions": [
+    "tabs", "http://*/*",
+    "tabs", "https://*/*"
+  ]
+}

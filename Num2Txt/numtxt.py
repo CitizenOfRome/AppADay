@@ -16,7 +16,9 @@ def num2txt(n):
         else:   apn = ""
         if x<20:    result = [first19[x]]+result
         else:   result = [tens[int(s[-2])-2]+" "+first19[int(s[-1])]]+result
-        if len(s)>2:    result = [first19[int(s[-3])]+" hundred"+apn]+result
+        if len(s)>2:
+            if first19[int(s[-3])]!="": apn = " hundred"+apn
+            result = [first19[int(s[-3])]+apn]+result
         s = s[:-3]
     p = 0
     i = 2
@@ -25,12 +27,12 @@ def num2txt(n):
         i+=3
         p+=1
         if  p==pow10_len:   p = 0
-    return " ".join(result)
+    return " ".join(filter(bool, " ".join(result).split(" ")))
     
 from string import letters
 letters += " "
 def txt2num(s):
-    '''Returns the numeric equvivalent of the given text'''
+    '''Returns the numeric equivalent of the given text'''
     nums = {"zero":0, "one":1, "two":2, "three":3, "four":4, "five":5, "six":6, "seven":7, "eight":8, "nine":9, "ten":10, "eleven":11, "twelve":12, "thirteen":13, "fourteen":14, "fifteen":15, "sixteen":16, "seventeen":17, "eighteen":18, "nineteen":19, "twenty":2, "thirty":3, "forty":4, "fifty":5, "sixty":6, "seventy":7, "eighty":8, "ninety":9}
     return int("".join(map(lambda x:str(nums[x]),filter(lambda x: x in nums,"".join(filter(lambda x: x in letters, str(s).lower())).split(" ")))))
 
