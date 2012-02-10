@@ -6,7 +6,7 @@ To install it, open the .crx file with your chromium-browser or "Load Unpacked E
 
 Usage:
 
-    js <JavScript_to_be_executed_on_the_tab>
+    js <JavaScript_to_be_executed_on_the_tab>
 
 Licence: http://creativecommons.org/licenses/by-nc-sa/3.0/
 -----------------------------------------------------------
