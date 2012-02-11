@@ -1,12 +1,47 @@
 <script>
 // This event is fired each time the user updates the text in the omnibox,
 // as long as the extension's keyword mode is still active.
+//String.prototype.reverse=function(){return this.split("").reverse().join("");}
+Array.prototype.getUnique = function(){
+   /*http://stackoverflow.com/a/1961068/937891*/
+   var u = {}, a = [];
+   for(var i = 0, l = this.length; i < l; ++i){
+      if(this[i] in u)
+         continue;
+      a.push(this[i]);
+      u[this[i]] = 1;
+   }
+   return a;
+}
+alphabetic = "ABCDEFHIJKLMNOPQRSTUVWXYZabcdefhijklmnopqrstuvwxyz";
+function getProperties(obj) {
+    /*http://stackoverflow.com/a/5842695/937891*/
+    var res = [];
+    for(var m in obj) {
+        res.push(m);
+    }
+    return res;
+}
+properties=getProperties(window).concat(getProperties(Document.prototype)).concat(getProperties(document)).getUnique();
 chrome.omnibox.onInputChanged.addListener(
   function(text, suggest) {
     console.log('inputChanged: ' + text);
-    suggest([
-      {content: (text), description: "The input so-far"}
-    ]);
+    dump = [];
+    for(i=text.length-1;i>=0;i--) {//Get the last word
+        if(alphabetic.indexOf(text[i])>=0)   dump.push(text[i]);
+        else break;
+    }
+    dump = dump.reverse().join("");
+    text=text.substring(0, text.length-dump.length);
+    sug = [];
+    for(var i=0,l=properties.length;i<l;i++) {//Suggest possible properties
+        prop = properties[i];
+        if(prop.indexOf(dump)==0) {
+            sug.push({content: text+prop, description: text+prop})
+        }
+    }
+    sug.push({content: (text+dump), description: text+dump});
+    suggest(sug);
   });
 
 // This event is fired with the user accepts the input in the omnibox.
@@ -14,7 +49,7 @@ chrome.omnibox.onInputEntered.addListener(
   function(text) {
     console.log('inputEntered: ' + text);
     //alert(eval(text));
-    chrome.tabs.executeScript(null, {code:text});
+    chrome.tabs.executeScript(null, {code:text});//Execute JS on page
   });
 
 /*chrome.browserAction.onClicked.addListener(function(tab) {
