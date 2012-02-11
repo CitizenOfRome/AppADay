@@ -12,7 +12,7 @@
     }
   ],
   "permissions": [
-    "tabs", "http://*/*", "https://*/*", "webNavigation"
+    "tabs", "http://*/*", "https://*/*", "webNavigation", "contextMenus"
   ],
   "browser_action": {
     "default_title": "Like this page on Facebook",
