@@ -1,6 +1,6 @@
 <iframe id="gustan" ></iframe>
 <script type="text/JavaScript">
-  chrome.extension.onConnect.addListener(function(port) {
+  /*chrome.extension.onConnect.addListener(function(port) {
     console.assert(port.name === "FBLike");
     port.onMessage.addListener(function(msg) {
       //window.liked = msg.liked;
@@ -8,9 +8,16 @@
       else chrome.browserAction.setIcon({path:"like.png"});
     });
     //window.port=port;
+  });*/
+  chrome.tabs.onActiveChanged.addListener(function(tabId, selectInfo) {
+    chrome.tabs.get(tabId, function(tab) {
+        url = "https://www.facebook.com/plugins/like.php?fblike=."+encodeURIComponent(window.location.protocol+"//"+window.location.host)+"&href="+(tab.url);
+        document.getElementById("gustan").src=url;
+    });
   });
+
   chrome.browserAction.onClicked.addListener(function(tab) {
-    url = "https://www.facebook.com/plugins/like.php?fblike=1&href="+(tab.url);
+    url = "https://www.facebook.com/plugins/like.php?fblike="+encodeURIComponent(window.location.protocol+"//"+window.location.host)+"&href="+(tab.url);
     document.getElementById("gustan").src=url;
     //alert(url);
     //window.port.postMessage({like:!window.liked});
