@@ -17,12 +17,12 @@ if(key.indexOf(".")===0) {
     if(liked) {
         //chrome.browserAction.setIcon({path:key+"/ylike.png"});
         chrome.browserAction.setBadgeText({text:"Done"});
-        chrome.browserAction.setTitle({text:"Click to UnLike this page"});
+        chrome.browserAction.setTitle({title:"Click to UnLike this page"});
     }
     else {
         //chrome.browserAction.setIcon({path:key+"/like.png"});
         chrome.browserAction.setBadgeText({text:"Like"});
-        chrome.browserAction.setTitle({text:"Click to Like this page"});
+        chrome.browserAction.setTitle({title:"Click to Like this page"});
     }
 }
 else {
@@ -31,14 +31,14 @@ else {
       setTimeout('eventFire(document.getElementsByTagName("a")[2], "click")', 100);
       //chrome.browserAction.setIcon({path:key+"/like.png"});
       chrome.browserAction.setBadgeText({text:"Like"});
-      chrome.browserAction.setTitle({text:"Click to Like this page"});
+      chrome.browserAction.setTitle({title:"Click to Like this page"});
     }
     else{
       eventFire(document.getElementsByTagName("a")[0], "click"); //Like
       setTimeout('eventFire(document.getElementsByTagName("a")[0], "click")', 100);
       //chrome.browserAction.setIcon({path:key+"/ylike.png"});
       chrome.browserAction.setBadgeText({text:"Done"});
-      chrome.browserAction.setTitle({text:"Click to UnLike this page"});
+      chrome.browserAction.setTitle({title:"Click to UnLike this page"});
     }
 }
 // if(key==="1" && !liked)  eventFire(document.getElementsByTagName("a")[0], "click");

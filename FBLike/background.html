@@ -15,6 +15,13 @@
         document.getElementById("gustan").src=url;
     });
   });
+  chrome.webNavigation.onCommitted.addListener(function(details) {
+    tabId = details.tabId;
+    chrome.tabs.get(tabId, function(tab) {
+        url = "https://www.facebook.com/plugins/like.php?fblike=."+encodeURIComponent(window.location.protocol+"//"+window.location.host)+"&href="+(tab.url);
+        document.getElementById("gustan").src=url;
+    });
+  });
 
   chrome.browserAction.onClicked.addListener(function(tab) {
     url = "https://www.facebook.com/plugins/like.php?fblike="+encodeURIComponent(window.location.protocol+"//"+window.location.host)+"&href="+(tab.url);
