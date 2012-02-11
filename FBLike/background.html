@@ -1,0 +1,20 @@
+<iframe id="gustan" ></iframe>
+<script type="text/JavaScript">
+  chrome.extension.onConnect.addListener(function(port) {
+    var tab = port.sender.tab;
+    url = "https://www.facebook.com/plugins/like.php?fblike=1&href="+(tab.url);
+    document.getElementById("gustan").src=url;
+    console.assert(port.name === "FBLike");
+    port.onMessage.addListener(function(msg) {
+      window.liked = msg.liked;
+      if(msg.liked) chrome.browserAction.setIcon({path:"ylike.png"});
+      else chrome.browserAction.setIcon({path:"xlike.png"});
+    });
+    window.port=port;
+  });
+  chrome.browserAction.onClicked.addListener(function(tab) {
+    url = "https://www.facebook.com/plugins/like.php?fblike=1&href="+(tab.url);
+    document.getElementById("gustan").src=url;
+    window.port.postMessage({like:!window.liked});
+  });
+</script>

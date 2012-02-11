@@ -1,0 +1,22 @@
+{
+  "name": "Like this page on Facebook",
+  "description": "Lets you like the current page on Facebook",
+  "version": "1.0",
+  "background_page": "background.html",
+  "icons": { "128": "like.png" },
+  "content_scripts": [
+    {
+      "matches": ["https://www.facebook.com/plugins/like.php?fblike=*"],
+      "js": ["inject.js"],
+      "all_frames": true
+    }
+  ],
+  "permissions": [
+    "tabs", "http://*/*", "https://*/*"
+  ],
+  "browser_action": {
+    "default_title": "Like this page",
+    "default_icon": "like.png"
+  },
+  "content_security_policy": "default-src 'self'"
+}

@@ -36,7 +36,7 @@ chrome.omnibox.onInputChanged.addListener(
     sug = [];
     for(var i=0,l=properties.length;i<l;i++) {//Suggest possible properties
         prop = properties[i];
-        if(prop.indexOf(dump)==0) {
+        if(prop.indexOf(dump)===0) {
             sug.push({content: text+prop, description: text+prop})
         }
     }
