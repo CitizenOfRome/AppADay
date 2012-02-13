@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Vote-Up</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="Content-Language" content="EN" />
+        <meta name="keywords" content="vote up" />
+        <style type="text/css">
+            .show {
+                height: 50%;
+                width: 50%;
+                position:absolute;
+                bottom:20%;
+                left:20%;
+                line-height:161%;
+                font-family:Georgia, Consolas;
+                font-size:150%;
+                overflow: auto;
+                background-color:white;
+                text-align: justify;
+                padding: 5%;
+                padding-top: 10%;
+                padding-bottom: 0%;
+                border:thick SteelBlue solid;
+            }
+            .new_post {
+                float:right;
+            }
+            .vote {
+                float:right;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="new_post">
+            <form method="post" action="/{{=request.application}}/default/new_post">
+                <h3><input type="text" name="title" /></h3>
+                <p><textarea name="message"></textarea></p>
+                <input type="submit" value="Create New Post" />
+            </form>
+        </div>
+        {{for i in xrange(len(posts)-1, -1,-1):}}
+        {{post=posts[i]}}
+        <div class="post">
+            <div class="vote">
+                <a href="/{{=request.application}}/default/vote?up=1&post={{=post.id}}"><image src="/{{=request.application}}/static/images/up.png" /></a>
+                <p>{{=post.votes}}</p>
+                <a href="/{{=request.application}}/default/vote?up=0&post={{=post.id}}"><image src="/{{=request.application}}/static/images/dn.png" /></a>
+            </div><br/>
+            <h3>{{=post.title}}</h3>
+            <p>{{=post.message}}</p>
+            <hr/>
+        </div>
+        {{pass}}
+    </body>
+</html>
