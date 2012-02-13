@@ -13,6 +13,7 @@ var port = chrome.extension.connect({name: "FBLike"});
 port.onMessage.addListener(function(msg) {
     //alert(msg.url+"\n"+window.location.href);
 if(msg.url!==window.location.href)   return;
+//alert(msg.url);
 key = (window.location.search.substring(window.location.search.indexOf("=")+1, window.location.search.indexOf("&")));
 //alert(key==="1");
 liked=(document.getElementsByTagName("a")[0].classList[2]==="like_button_like");

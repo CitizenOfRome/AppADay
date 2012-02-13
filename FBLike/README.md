@@ -1,4 +1,4 @@
-FBLike: Feb 12th & 13th 2012
+FBLike: Feb 11th, 12th & 13th 2012
 -----------------------------------------------------------
 The Facebook like button is an extension for Chromium-based browsers that allows you to like any page on the internet.
 

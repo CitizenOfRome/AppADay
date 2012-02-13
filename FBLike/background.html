@@ -1,20 +1,21 @@
 <iframe id="gustan" ></iframe>
 <script type="text/JavaScript">
-  chrome.extension.onConnect.addListener(function(port) {
+  /*chrome.extension.onConnect.addListener(function(port) {
     console.assert(port.name === "FBLike");
-    /*port.onMessage.addListener(function(msg) {
+    port.onMessage.addListener(function(msg) {
       //window.liked = msg.liked;
       if(msg.liked) chrome.browserAction.setIcon({path:"ylike.png"});
       else chrome.browserAction.setIcon({path:"like.png"});
-    });*/
+    });
     window.port=port;
-  });
+  });*/
   chrome.tabs.onActiveChanged.addListener(function(tabId, selectInfo) {
     chrome.tabs.get(tabId, function(tab) {
         url = "https://www.facebook.com/plugins/like.php?fblike=.1&href="+(tab.url);
+        chrome.extension.onConnect.removeListener(window.listen);
+        window.listen = function(port) {port.postMessage({url:url});};
+        chrome.extension.onConnect.addListener(window.listen);
         document.getElementById("gustan").src=url;
-        port = port||chrome.extension.connect({name: "FBLike"});
-        port.postMessage({url:url});
         //chrome.tabs.sendRequest(tab.id, {url: url});
     });
   });
@@ -22,17 +23,21 @@
     tabId = details.tabId;
     chrome.tabs.get(tabId, function(tab) {
         url = "https://www.facebook.com/plugins/like.php?fblike=.1&href="+(tab.url);
+        chrome.extension.onConnect.removeListener(window.listen);
+        window.listen = function(port) {port.postMessage({url:url});};
+        chrome.extension.onConnect.addListener(window.listen);
         document.getElementById("gustan").src=url;
-        port = port||chrome.extension.connect({name: "FBLike"});
-        port.postMessage({url:url});
+        //var port = chrome.tabs.connect(tab.id, {name: "FBLike"});
+        //port.postMessage({url:url});
         //chrome.tabs.sendRequest(tab.id, {url: url});
     });
   });
   chrome.browserAction.onClicked.addListener(function(tab) {
     url = "https://www.facebook.com/plugins/like.php?fblike=1&href="+(tab.url);
+    chrome.extension.onConnect.removeListener(window.listen);
+    window.listen = function(port) {port.postMessage({url:url});};
+    chrome.extension.onConnect.addListener(window.listen);
     document.getElementById("gustan").src=url;
-    port = port||chrome.extension.connect({name: "FBLike"});
-    port.postMessage({url:url});
     //chrome.tabs.sendRequest(tab.id, {url: url});
     //alert(url);
     //window.port.postMessage({like:!window.liked});
