@@ -1,6 +1,6 @@
 XHR-Form-Submit: Feb 16th 2012
 -----------------------------------------------------------
-This is a way to easily submit forms via XHR(ajax).
+This script allows you to easily submit forms via XHR(ajax).
 
 To use it, simply include the JavaScript and add an onsubmit to your form-element, like:
 
