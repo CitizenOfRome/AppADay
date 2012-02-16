@@ -4,7 +4,7 @@ This script allows you to easily submit forms via XHR(ajax).
 
 To use it, simply include the JavaScript and add an onsubmit to your form-element, like:
 
-    onsubmit="JavaScript:post_form(this, 'post.php', 'POST', my_callback); return false;"
+    <form method="POST" action="post.php" onsubmit="JavaScript:post_form(this, my_callback); return false;">
     
 Where, 
 

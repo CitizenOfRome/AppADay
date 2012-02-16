@@ -1,12 +1,11 @@
 function submit(url, callback, method, params) {
     method = method||"GET";
     params = params||null;
-    callback = callback||(function(s){});
     ajax = window.XMLHttpRequest?(new XMLHttpRequest()):(new ActiveXObject("Microsoft.XMLHttp"));
     ajax.onreadystatechange=function() {
         if(ajax.readyState===4) {
             //if(ajax.responseText!=="1" || ajax.status>=400) return submit(url, method, params);
-            callback(ajax.responseText);
+            if(callback)    callback(ajax.responseText);
         }
     };
     if(method==="GET" && params!==null) {
@@ -42,8 +41,10 @@ function get_value(element, form) {
             return false;
     }
 }
-function post_form(form, url, method, callback) {
+function post_form(form, callback) {
     var params="", add="", names=[];
+    url = form.action;
+    method = form.method;
     for(i=0;i<form.length;i++) {
         if(names.indexOf(form[i].name)>=0)   continue;
         names.push(form[i].name);
