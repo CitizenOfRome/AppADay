@@ -6,7 +6,7 @@ To use it, simply include the JavaScript and add an onsubmit to your form-elemen
 
     <form method="POST" action="post.php" onsubmit="JavaScript:post_form(this, my_callback); return false;">
     
-Where, 
+Where, my_callback is called with the XHR_responseText as its parameter, like: 
 
     my_callback = function(xhr_response){...}
 
