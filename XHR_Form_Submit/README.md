@@ -6,7 +6,9 @@ To use it, simply include the JavaScript and add an onsubmit to your form-elemen
 
     onsubmit="JavaScript:post_form(this, 'post.php', 'POST', my_callback); return false;"
     
-Where, my_callback = function(xhr_response){...}
+Where, 
+
+    my_callback = function(xhr_response){...}
 
 Licence: http://creativecommons.org/licenses/by-nc-sa/3.0/
 -----------------------------------------------------------
