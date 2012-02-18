@@ -78,24 +78,28 @@ use_janrain(auth,filename='private/janrain.key')
 ## >>> rows=db(db.mytable.myfield=='value').select(db.mytable.ALL)
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
-
+from datetime import datetime
 db.define_table('posts', 
     db.Field('title', 'string'),
     db.Field('message', 'text'),
-    db.Field('votes', 'integer', default=0)
+    db.Field('votes', 'integer', default=0),
+    db.Field('time', 'datetime', default=datetime.utcnow())
 )
-db.define_table('responses',
+db.define_table('answers',
     db.Field('message', 'string'),
     db.Field('post', db.posts),
-    db.Field('votes', 'integer', default=0)
+    db.Field('votes', 'integer', default=0),
+    db.Field('time', 'datetime', default=datetime.utcnow())
 )
 db.define_table('comments',
     db.Field('message', 'string'),
     db.Field('post', db.posts),
-    db.Field('votes', 'integer', default=0)
+    db.Field('votes', 'integer', default=0),
+    db.Field('time', 'datetime', default=datetime.utcnow())
 )
 db.define_table('comments_r',
     db.Field('message', 'string'),
-    db.Field('response', db.responses),
-    db.Field('votes', 'integer', default=0)
+    db.Field('answer', db.answers),
+    db.Field('votes', 'integer', default=0),
+    db.Field('time', 'datetime', default=datetime.utcnow())
 )

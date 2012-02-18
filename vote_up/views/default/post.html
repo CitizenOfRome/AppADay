@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Vote-Up</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="Content-Language" content="EN" />
+        <meta name="keywords" content="vote up" />
+        <style type="text/css">
+            .new_post {
+                float:right;
+                border-style: solid;
+                border-width: 2px;
+                border-color: grey;
+                margin-right:2px;
+            }
+            .post {
+                width:100%;
+                font-size:120%;
+            }
+            .vote {
+                float:right;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="new_post">
+            <form action="/{{=request.application}}/default/new_resp/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, alert); return false;">
+                <p><textarea name="message"></textarea></p>
+                <input type="submit" value="Create New Response" />
+            </form>
+        </div>
+        <div class="post">
+            <div class="vote">
+                <image src="/{{=request.application}}/static/images/up.png" onclick="submit('/{{=request.application}}/default/vote?up=1&post={{=post.id}}', function(votes){document.getElementById('{{=post.id}}').innerHTML=votes})" />
+                <p id="{{=post.id}}">{{=post.votes}}</p>
+                <image src="/{{=request.application}}/static/images/dn.png" onclick="submit('/{{=request.application}}/default/vote?up=0&post={{=post.id}}', function(votes){document.getElementById('{{=post.id}}').innerHTML=votes})" />
+            </div><br/>
+            <h3>{{=post.title}}</h3>
+            <p>{{=post.message}}</p>
+            <hr/>
+            {{if comments!=None:}}
+            {{for comment in comments:}}
+            <div class="post">
+            <div class="vote">
+                <image src="/{{=request.application}}/static/images/up.png" onclick="submit('/{{=request.application}}/default/vote?up=1&comment={{=comment.id}}', function(votes){document.getElementById('{{=post.id}}_{{=comment.id}}').innerHTML=votes})" />
+                <p id="{{=post.id}}_{{=comment.id}}">{{=comment.votes}}</p>
+                <image src="/{{=request.application}}/static/images/dn.png" onclick="submit('/{{=request.application}}/default/vote?up=0&comment={{=comment.id}}', function(votes){document.getElementById('{{=post.id}}_{{=comment.id}}').innerHTML=votes})" />
+            </div><br/>
+            <span class="title">{{=comment.message}}</span>
+            </div>
+            {{pass}}
+            {{pass}}
+            <form action="/{{=request.application}}/default/new_comment/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, alert); return false;">
+                <input type="text" name="message" /><input type="submit" value="Add Comment"/>
+            </form>
+            <hr/>
+        </div>
+        {{if responses!=None:}}
+        {{for resp in resps:}}
+        <div class="resp">
+            <div class="vote">
+                <image src="/{{=request.application}}/static/images/up.png" onclick="submit('/{{=request.application}}/default/vote?up=1&resp={{=resp.id}}', function(votes){document.getElementById('r{{=resp.id}}').innerHTML=votes})" />
+                <p id="r{{=resp.id}}">{{=resp.votes}}</p>
+                <image src="/{{=request.application}}/static/images/dn.png" onclick="submit('/{{=request.application}}/default/vote?up=0&resp={{=resp.id}}', function(votes){document.getElementById('r{{=resp.id}}').innerHTML=votes})" />
+            </div><br/>
+            <h3>{{=resp.title}}</h3>
+            <p>{{=resp.message}}</p>
+            <hr/>
+            {{for comment in comments_r[resp.id]:}}
+            <div class="post">
+            <div class="vote">
+                <image src="/{{=request.application}}/static/images/up.png" onclick="submit('/{{=request.application}}/default/vote?up=1&comment={{=comment.id}}', function(votes){document.getElementById('r{{=resp.id}}_{{=comment.id}}').innerHTML=votes})" />
+                <p id="r{{=resp.id}}_{{=comment.id}}">{{=comment.votes}}</p>
+                <image src="/{{=request.application}}/static/images/dn.png" onclick="submit('/{{=request.application}}/default/vote?up=0&comment={{=comment.id}}', function(votes){document.getElementById('r{{=resp.id}}_{{=comment.id}}').innerHTML=votes})" />
+            </div><br/>
+            <span class="title">{{=comment.message}}</span>
+            </div>
+            {{pass}}
+            <form action="/{{=request.application}}/default/new_comment_r/{{=resp.id}}" method="POST" onsubmit="JavaScript:post_form(this, alert); return false;">
+                <input type="text" name="message" /><input type="submit" value="Add Comment"/>
+            </form>
+            <hr/>
+        </div>
+        {{pass}}
+        {{pass}}
+        <script type="text/JavaScript">
+            
+        </script>
+        <script type="text/JavaScript" src="/{{=request.application}}/static/js/XHRSubmit.js"></script>
+    </body>
+</html>

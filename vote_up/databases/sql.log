@@ -96,3 +96,22 @@ CREATE TABLE comments_r(
     votes INTEGER
 );
 success!
+timestamp: 2012-02-14T11:57:01.832000
+ALTER TABLE posts ADD time TIMESTAMP;
+timestamp: 2012-02-14T11:57:04.226000
+ALTER TABLE responses ADD time TIMESTAMP;
+timestamp: 2012-02-14T11:57:05.030000
+ALTER TABLE comments ADD time TIMESTAMP;
+timestamp: 2012-02-14T11:57:05.887000
+ALTER TABLE comments_r ADD time TIMESTAMP;
+timestamp: 2012-02-18T23:39:32.154000
+CREATE TABLE answers(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    message CHAR(512),
+    post INTEGER REFERENCES posts(id) ON DELETE CASCADE,
+    votes INTEGER,
+    time TIMESTAMP
+);
+success!
+timestamp: 2012-02-18T23:39:33.270000
+ALTER TABLE comments_r ADD answer INTEGER REFERENCES answers(id) ON DELETE CASCADE;

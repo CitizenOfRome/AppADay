@@ -1,0 +1,21 @@
+(dp1
+S'output'
+p2
+S"<type 'exceptions.SyntaxError'> invalid select attribute: limit"
+p3
+sS'layer'
+p4
+S'E:\\Programming\\Python\\web2py\\applications\\vote_up\\controllers/default.py'
+p5
+sS'code'
+p6
+S'def index():\n    \'\'\'Display a post, its comments, its responses and allow for vote-up\'\'\'\n    posts=db(db.posts).select(orderby=(~db.posts.votes), limit=10)\n    return response.render(\'default/index.html\', locals())\n    \ndef new_post():\n    \'\'\'Accept a new post\'\'\'\n    post_id = db.posts.insert(\n        title = request.vars["title"],\n        message = request.vars["message"]\n    )\n    #post = db.posts[post_id]\n    return "true"\n    \ndef vote():\n    \'\'\'Add a vote\'\'\'\n    post = db(db.posts.id == request.vars["post"]).select().first()\n    if int(request.vars["up"])==1:  inc=1\n    else:   inc=-1\n    post.update_record(votes=post.votes+inc)\n    return post.votes\nresponse._vars=response._caller(index)\n'
+p7
+sS'snapshot'
+p8
+(dp9
+sS'traceback'
+p10
+S'Traceback (most recent call last):\n  File "E:\\Programming\\Python\\web2py\\gluon\\restricted.py", line 204, in restricted\n    exec ccode in environment\n  File "E:\\Programming\\Python\\web2py\\applications\\vote_up\\controllers/default.py", line 22, in <module>\n  File "E:\\Programming\\Python\\web2py\\gluon\\globals.py", line 172, in <lambda>\n    self._caller = lambda f: f()\n  File "E:\\Programming\\Python\\web2py\\applications\\vote_up\\controllers/default.py", line 3, in index\n    posts=db(db.posts).select(orderby=(~db.posts.votes), limit=10)\n  File "E:\\Programming\\Python\\web2py\\gluon\\dal.py", line 6333, in select\n    return self.db._adapter.select(self.query,fields,attributes)\n  File "E:\\Programming\\Python\\web2py\\gluon\\dal.py", line 1274, in select\n    sql = self._select(query, fields, attributes)\n  File "E:\\Programming\\Python\\web2py\\gluon\\dal.py", line 1672, in _select\n    sql = super(SQLiteAdapter, self)._select(query, fields, attributes)\n  File "E:\\Programming\\Python\\web2py\\gluon\\dal.py", line 1144, in _select\n    raise SyntaxError, \'invalid select attribute: %s\' % key\nSyntaxError: invalid select attribute: limit\n'
+p11
+s.

@@ -7,14 +7,15 @@
         <meta name="keywords" content="vote up" />
         <style type="text/css">
             .new_post {
-                float:left;
+                float:right;
                 border-style: solid;
                 border-width: 2px;
                 border-color: grey;
                 margin-right:2px;
             }
-            .vote {
-                float:right;
+            .post {
+                width:100%;
+                font-size:120%;
             }
         </style>
     </head>
@@ -27,16 +28,10 @@
             </form>
         </div>
         {{for post in posts:}}
-        <div class="post">
-            <div class="vote">
-                <image src="/{{=request.application}}/static/images/up.png" onclick="submit('/{{=request.application}}/default/vote?up=1&post={{=post.id}}', function(votes){document.getElementById('{{=post.id}}').innerHTML=votes})" />
-                <p id="{{=post.id}}">{{=post.votes}}</p>
-                <image src="/{{=request.application}}/static/images/dn.png" onclick="submit('/{{=request.application}}/default/vote?up=0&post={{=post.id}}', function(votes){document.getElementById('{{=post.id}}').innerHTML=votes})" />
-            </div><br/>
-            <h3>{{=post.title}}</h3>
-            <p>{{=post.message}}</p>
-            <hr/>
-        </div>
+        <div class="post"><a href="/{{=request.application}}/default/get_post/{{=post.id}}">
+            <span class="vote">{{=post.votes}}</span>
+            <span class="title">{{=post.title}}</span>
+        </a></div>
         {{pass}}
         <script type="text/JavaScript">
             
