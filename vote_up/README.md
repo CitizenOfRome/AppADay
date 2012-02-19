@@ -1,6 +1,6 @@
-Vote-Up: Feb 13th, 16th & 18th 2012
+Vote-Up: Feb 13th, 16th, 18th & 19th 2012
 -----------------------
-Vote-up is a Stack-Exchange-like rating system that is still in its infancy.
+Vote-up is a Stack-Exchange-inspired rating system where you can create, vote upon and respond to posts.
 
 It runs on a Web2Py back-end, so everything in this directoy must be placed in the 'applications/vote_up' folder of your web2py installation, which you can download from http://www.web2py.com/ .
 

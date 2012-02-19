@@ -21,14 +21,14 @@
     </head>
     <body>
         <div class="new_post">
-            <form action="/{{=request.application}}/default/new_post" method="POST" onsubmit="JavaScript:post_form(this, alert); return false;">
+            <form action="{{=path_to['default']}}/new_post" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
                 <h3><input type="text" name="title" /></h3>
                 <p><textarea name="message"></textarea></p>
                 <input type="submit" value="Create New Post" />
             </form>
         </div>
         {{for post in posts:}}
-        <div class="post"><a href="/{{=request.application}}/default/get_post/{{=post.id}}">
+        <div class="post"><a href="{{=path_to['default']}}/get_post/{{=post.id}}">
             <span class="vote">{{=post.votes}}</span>
             <span class="title">{{=post.title}}</span>
         </a></div>
@@ -36,6 +36,6 @@
         <script type="text/JavaScript">
             
         </script>
-        <script type="text/JavaScript" src="/{{=request.application}}/static/js/XHRSubmit.js"></script>
+        <script type="text/JavaScript" src="{{=path_to['static']}}/js/XHRSubmit.js"></script>
     </body>
 </html>

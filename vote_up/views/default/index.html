@@ -20,7 +20,7 @@
     </head>
     <body>
         <div class="new_post">
-            <form action="/{{=request.application}}/default/new_post" method="POST" onsubmit="JavaScript:post_form(this, alert); return false;">
+            <form action="{{=path_to['default']}}/new_post" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
                 <h3><input type="text" name="title" /></h3>
                 <p><textarea name="message"></textarea></p>
                 <input type="submit" value="Create New Post" />
@@ -29,9 +29,9 @@
         {{for post in posts:}}
         <div class="post">
             <div class="vote">
-                <image src="/{{=request.application}}/static/images/up.png" onclick="submit('/{{=request.application}}/default/vote?up=1&post={{=post.id}}', function(votes){document.getElementById('{{=post.id}}').innerHTML=votes})" />
+                <image src="{{=path_to['static']}}/images/up.png" onclick="submit('{{=path_to['default']}}/vote?up=1&post={{=post.id}}', function(votes){document.getElementById('{{=post.id}}').innerHTML=votes})" />
                 <p id="{{=post.id}}">{{=post.votes}}</p>
-                <image src="/{{=request.application}}/static/images/dn.png" onclick="submit('/{{=request.application}}/default/vote?up=0&post={{=post.id}}', function(votes){document.getElementById('{{=post.id}}').innerHTML=votes})" />
+                <image src="{{=path_to['static']}}/images/dn.png" onclick="submit('{{=path_to['default']}}/vote?up=0&post={{=post.id}}', function(votes){document.getElementById('{{=post.id}}').innerHTML=votes})" />
             </div><br/>
             <h3>{{=post.title}}</h3>
             <p>{{=post.message}}</p>
@@ -41,6 +41,6 @@
         <script type="text/JavaScript">
             
         </script>
-        <script type="text/JavaScript" src="/{{=request.application}}/static/js/XHRSubmit.js"></script>
+        <script type="text/JavaScript" src="{{=path_to['static']}}/js/XHRSubmit.js"></script>
     </body>
 </html>
