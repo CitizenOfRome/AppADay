@@ -16,7 +16,7 @@ def get_post():
     comments_r = {}
     if answers:
         for answer in answers:
-            comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(0,20)).first())
+            comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(0,20)))
     return response.render('default/post.html', locals())
     
 def new_post():
@@ -51,14 +51,13 @@ def new_comment():
     #post = db.posts[post_id]
     return "true"
 def new_comment_r():
-    '''Accept a new comment for a response'''
+    '''Accept a new comment for an answer'''
     path_to=session.path_to
     answer=db(db.answers.id == request.args[0]).select().first()
-    db.comments.insert(
+    db.comments_r.insert(
         message = request.vars["message"],
         answer = answer
     )
-    #response = db.answers[response_id]
     return "true"
     
 def vote():

@@ -77,7 +77,7 @@
             </div>
             {{pass}}
             {{pass}}
-            <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
+            <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, alert); return false;">
                 <input type="text" name="message" /><input type="submit" value="Add Comment"/>
             </form>
             <hr/>
