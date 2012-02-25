@@ -37,7 +37,7 @@
             </div><br/>
             <h3>{{=post.title}}</h3>
             <p>{{=post.message}}</p>
-            <hr/>
+            <br/>
             {{if comments!=None:}}
             {{for comment in comments:}}
             <div class="comment">
@@ -64,7 +64,7 @@
                 <image src="{{=path_to['static']}}/images/dn.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){document.getElementById('r{{=answer.id}}').innerHTML=votes})" />
             </div><br/>
             <p>{{=answer.message}}</p>
-            <hr/>
+            <br/>
             {{if comments_r[answer.id]:}}
             {{for comment in comments_r[answer.id]:}}
             <div class="comment">
@@ -77,7 +77,7 @@
             </div>
             {{pass}}
             {{pass}}
-            <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, alert); return false;">
+            <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
                 <input type="text" name="message" /><input type="submit" value="Add Comment"/>
             </form>
             <hr/>

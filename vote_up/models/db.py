@@ -83,6 +83,7 @@ db.define_table('posts',
     db.Field('title', 'string'),
     db.Field('message', 'text'),
     db.Field('votes', 'integer', default=0),
+    db.Field('v_plus', 'list:reference users'),
     db.Field('time', 'datetime', default=datetime.utcnow())
 )
 db.define_table('answers',
@@ -103,3 +104,11 @@ db.define_table('comments_r',
     db.Field('votes', 'integer', default=0),
     db.Field('time', 'datetime', default=datetime.utcnow())
 )
+
+db.define_table('users',
+    db.Field('name', 'string'),
+    db.Field('password', 'password'),
+    db.Field('joined', 'datetime', default=datetime.utcnow())
+)
+
+#TODO: Add Users and Rep

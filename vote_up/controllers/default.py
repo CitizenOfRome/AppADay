@@ -9,6 +9,7 @@ def index():
     
 def get_post():
     '''Display a post, its comments, its answers and allow for vote-up'''
+    print str(request.vars)
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
     answers=db(db.answers.post == post).select(orderby=(~db.answers.votes), limitby=(0,20))
@@ -21,6 +22,7 @@ def get_post():
     
 def new_post():
     '''Accept a new post'''
+    print str(request.vars)
     path_to=session.path_to
     post_id = db.posts.insert(
         title = request.vars["title"],
@@ -31,6 +33,7 @@ def new_post():
 
 def new_response():
     '''Accept a new response'''
+    print str(request.vars)
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
     post_id = db.answers.insert(
@@ -42,6 +45,7 @@ def new_response():
 
 def new_comment():
     '''Accept a new comment for a post'''
+    print str(request.vars)
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
     post_id = db.comments.insert(
@@ -52,6 +56,7 @@ def new_comment():
     return "true"
 def new_comment_r():
     '''Accept a new comment for an answer'''
+    print str(request.vars)
     path_to=session.path_to
     answer=db(db.answers.id == request.args[0]).select().first()
     db.comments_r.insert(
@@ -62,6 +67,7 @@ def new_comment_r():
     
 def vote():
     '''Add a vote'''
+    print str(request.vars)
     path_to=session.path_to
     if request.vars["post"]:    var = db(db.posts.id == request.vars["post"]).select().first()
     elif request.vars["answer"]:    var = db(db.answers.id == request.vars["answer"]).select().first()
