@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Vote-Up</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="Content-Language" content="EN" />
+        <meta name="keywords" content="vote up" />
+        <style type="text/css">
+            
+        </style>
+    </head>
+    <body>
+        <form action="{{=path_to['default']}}/user" method="POST">
+            Name:<input type="text" name="name" />
+            Password:<input type="password" name="password" />
+            <input type="submit" value="Join the fun" />
+        </form>
+        <script type="text/JavaScript" src="{{=path_to['static']}}/js/XHRSubmit.js"></script>
+    </body>
+</html>

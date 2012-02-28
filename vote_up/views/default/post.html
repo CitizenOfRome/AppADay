@@ -30,10 +30,10 @@
             </form>
         </div>
         <div class="post">
-            <div class="vote">
-                <image src="{{=path_to['static']}}/images/up.png" onclick="submit('{{=path_to['default']}}/vote?up=1&post={{=post.id}}', function(votes){document.getElementById('{{=post.id}}').innerHTML=votes})" />
-                <p id="{{=post.id}}">{{=post.votes}}</p>
-                <image src="{{=path_to['static']}}/images/dn.png" onclick="submit('{{=path_to['default']}}/vote?up=0&post={{=post.id}}', function(votes){document.getElementById('{{=post.id}}').innerHTML=votes})" />
+            <div class="vote" id="{{=post.id}}">
+                <image src="{{=path_to['static']}}/images/up{{if post.v_up and session.user.id in post.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
+                <p>{{=post.votes}}</p>
+                <image src="{{=path_to['static']}}/images/dn{{if post.v_dn and session.user.id in post.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
             </div><br/>
             <h3>{{=post.title}}</h3>
             <p>{{=post.message}}</p>
@@ -41,10 +41,10 @@
             {{if comments!=None:}}
             {{for comment in comments:}}
             <div class="comment">
-            <div class="cvote">
-                <image src="{{=path_to['static']}}/images/up.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment={{=comment.id}}', function(votes){document.getElementById('{{=post.id}}_{{=comment.id}}').innerHTML=votes})" />
-                <p id="{{=post.id}}_{{=comment.id}}">{{=comment.votes}}</p>
-                <image src="{{=path_to['static']}}/images/dn.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment={{=comment.id}}', function(votes){document.getElementById('{{=post.id}}_{{=comment.id}}').innerHTML=votes})" />
+            <div class="cvote" id="{{=post.id}}_{{=comment.id}}">
+                <image src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
+                <p>{{=comment.votes}}</p>
+                <image src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
             </div><br/>
             <span class="title">{{=comment.message}}</span>
             </div>
@@ -58,20 +58,20 @@
         {{if answers!=None:}}
         {{for answer in answers:}}
         <div class="answer">
-            <div class="vote">
-                <image src="{{=path_to['static']}}/images/up.png" onclick="submit('{{=path_to['default']}}/vote?up=1&answer={{=answer.id}}', function(votes){document.getElementById('r{{=answer.id}}').innerHTML=votes})" />
-                <p id="r{{=answer.id}}">{{=answer.votes}}</p>
-                <image src="{{=path_to['static']}}/images/dn.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){document.getElementById('r{{=answer.id}}').innerHTML=votes})" />
+            <div class="vote" id="r{{=answer.id}}">
+                <image src="{{=path_to['static']}}/images/up{{if answer.v_up and session.user.id in answer.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
+                <p>{{=answer.votes}}</p>
+                <image src="{{=path_to['static']}}/images/dn{{if answer.v_dn and session.user.id in answer.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
             </div><br/>
             <p>{{=answer.message}}</p>
             <br/>
             {{if comments_r[answer.id]:}}
             {{for comment in comments_r[answer.id]:}}
             <div class="comment">
-            <div class="cvote">
-                <image src="{{=path_to['static']}}/images/up.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment={{=comment.id}}', function(votes){document.getElementById('r{{=answer.id}}_{{=comment.id}}').innerHTML=votes})" />
-                <p id="r{{=answer.id}}_{{=comment.id}}">{{=comment.votes}}</p>
-                <image src="{{=path_to['static']}}/images/dn.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment={{=comment.id}}', function(votes){document.getElementById('r{{=answer.id}}_{{=comment.id}}').innerHTML=votes})" />
+            <div class="cvote" id="r{{=answer.id}}_{{=comment.id}}">
+                <image src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
+                <p>{{=comment.votes}}</p>
+                <image src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
             </div><br/>
             <span class="title">{{=comment.message}}</span>
             </div>
@@ -85,7 +85,22 @@
         {{pass}}
         {{pass}}
         <script type="text/JavaScript">
-            
+            function vote(response, id) {
+                response = JSON.parse(response);
+                document.getElementById(id).children[1].innerHTML=response["votes"];
+                if(response["status"]===1) {
+                    document.getElementById(id).children[0].src = "{{=path_to['static']}}/images/up_h.png";
+                    document.getElementById(id).children[2].src = "{{=path_to['static']}}/images/dn.png";
+                }
+                if(response["status"]===-1) {
+                    document.getElementById(id).children[0].src = "{{=path_to['static']}}/images/up.png";
+                    document.getElementById(id).children[2].src = "{{=path_to['static']}}/images/dn_h.png";
+                }
+                if(response["status"]===0) {
+                    document.getElementById(id).children[0].src = "{{=path_to['static']}}/images/up.png";
+                    document.getElementById(id).children[2].src = "{{=path_to['static']}}/images/dn.png";
+                }
+            }
         </script>
         <script type="text/JavaScript" src="{{=path_to['static']}}/js/XHRSubmit.js"></script>
     </body>

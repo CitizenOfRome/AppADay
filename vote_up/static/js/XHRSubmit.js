@@ -1,5 +1,6 @@
 function submit(url, callback, method, params) {
-    method = method.toUpperCase()||"GET";
+    method = method||"GET";
+    method = method.toUpperCase();
     params = params||null;
     ajax = window.XMLHttpRequest?(new XMLHttpRequest()):(new ActiveXObject("Microsoft.XMLHttp"));
     ajax.onreadystatechange=function() {
@@ -44,7 +45,7 @@ function get_value(element, form) {
 function post_form(form, callback) {
     var params="", add="", names=[];
     url = form.action;
-    method = form.method.toUpperCase();
+    method = form.method;
     for(i=0;i<form.length;i++) {
         if(names.indexOf(form[i].name)>=0)   continue;
         names.push(form[i].name);
