@@ -64,8 +64,15 @@
             <span class="rep">({{=db.users[post.user].reputation}})</span>
         </a></div>
         {{pass}}
+        <span id="moar"></span>
+        <a href="JavaScript:load_moar()" class="moar">Load More</a>
         <script type="text/JavaScript">
-            
+            moar = 0;
+            delta = parseInt({{=session.delta}});
+            function load_moar() {
+                m = document.getElementById("moar");
+                return submit("{{=path_to['default']}}/moar?post=1&moar="+parseInt(moar+delta)+"&delta="+delta, function(s) { if(s!=="") {m.innerHTML+=s; moar+=delta;} });
+            }
         </script>
         <script type="text/JavaScript" src="{{=path_to['static']}}/js/XHRSubmit.js"></script>
     </body>

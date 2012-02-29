@@ -3,13 +3,14 @@ import json
 session.path_to = {}
 session.path_to["static"] = "/"+request.application+"/static"
 session.path_to["default"] = "/"+request.application+"/default"
+session.delta = 5
 
 def index():
     '''Display a post, its comments, its answers and allow for vote-up'''
     if not session.user: return user()
     #print db(db.users).select()
     path_to=session.path_to
-    posts=db(db.posts).select(orderby=(~db.posts.votes), limitby=(0,20))
+    posts=db(db.posts).select(orderby=(~db.posts.votes), limitby=(0, session.delta))
     return response.render('default/main.html', locals())
     
 def get_post():
@@ -17,13 +18,91 @@ def get_post():
     if not session.user: return user()
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
-    answers=db(db.answers.post == post).select(orderby=(~db.answers.votes), limitby=(0,20))
-    comments=db(db.comments.post == post).select(orderby=(~db.comments.votes), limitby=(0,20))
+    answers=db(db.answers.post == post).select(orderby=(~db.answers.votes), limitby=(0, session.delta))
+    comments=db(db.comments.post == post).select(orderby=(~db.comments.votes), limitby=(0, session.delta))
     comments_r = {}
     if answers:
         for answer in answers:
-            comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(0,20)))
+            comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(0, session.delta)))
     return response.render('default/post.html', locals())
+
+def moar():
+    '''Load moar posts/answers/comments'''
+    if not session.user: return user()
+    if request.vars["moar"]: moar = int(request.vars["moar"])
+    else: moar = 0
+    if request.vars["delta"]: session.delta = int(request.vars["delta"])
+    path_to=session.path_to
+    if request.vars["post"]:
+        vars = db(db.posts).select(orderby=(~db.posts.votes), limitby=(moar,moar+session.delta))
+        ret = ""
+        for post in vars:
+            ret = ret+'''<div class="post"><a href="'''+path_to["default"]+'''/get_post/'''+str(post.id)+'''">
+                <span class="vote">'''+str(post.votes)+'''</span>
+                <span class="title">'''+post.title+'''</span>
+                <span class="name">-'''+db.users[post.user].name+'''</span>
+                <span class="rep">('''+str(db.users[post.user].reputation)+''')</span>
+                </a></div>'''
+        return ret
+    elif request.vars["answer"]:
+        post=db(db.posts.id == request.vars["answer"]).select().first()
+        answers=db(db.answers.post == post).select(orderby=(~db.answers.votes), limitby=(moar,moar+session.delta))
+        comments_r = {}
+        if answers:
+            for answer in answers:
+                comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(moar,moar+session.delta)))
+        return response.render('default/post_delta.html', locals())
+    elif request.vars["comment"]:
+        post=db(db.posts.id == request.vars["comment"]).select().first()
+        comments=db(db.comments.post == post).select(orderby=(~db.comments.votes), limitby=(moar,moar+session.delta))
+        if not comments: comments=[]
+        ret = ""
+        for comment in comments:
+            if comment.v_up and session.user.id in comment.v_up:   up = '_h'
+            else: up = ''
+            if comment.v_dn and session.user.id in comment.v_dn:   dn = '_h'
+            else: dn = ''
+            ret = ret+'''
+                    <tr class="comment">
+                        <td class="vote" id="'''+str(post.id)+'''_'''+str(comment.id)+'''">
+                            <image class="vicon"src="'''+path_to['static']+'''/images/up'''+up+'''.png" onclick="submit(\''''+path_to['default']+'''/vote?up=1&comment='''+str(comment.id)+'''\', function(votes){vote(votes, \''''+str(post.id)+'''_'''+str(comment.id)+'''\')})" />
+                            <p>'''+str(comment.votes)+'''</p>
+                            <image class="vicon"src="'''+path_to['static']+'''/images/dn'''+dn+'''.png" onclick="submit(\''''+path_to['default']+'''/vote?up=0&comment='''+str(comment.id)+'''\', function(votes){vote(votes, \''''+str(post.id)+'''_'''+str(comment.id)+'''\')})" />
+                        </td>
+                        <td class="content">
+                            <span class="title">'''+comment.message+'''</span>
+                            -'''+db.users[comment.user].name+'''('''+str(db.users[comment.user].reputation)+''')
+                            <hr/>
+                        </td>
+                    </tr>
+            '''
+        return ret
+    elif request.vars["comment_r"]:
+        post=db(db.answers.id == request.vars["comment_r"]).select().first()
+        comments=db(db.comments_r.answer == post).select(orderby=(~db.comments_r.votes), limitby=(moar,moar+session.delta))
+        if not comments: comments=[]
+        ret = ""
+        for comment in comments:
+            if comment.v_up and session.user.id in comment.v_up:   up = '_h'
+            else: up = ''
+            if comment.v_dn and session.user.id in comment.v_dn:   dn = '_h'
+            else: dn = ''
+            ret = ret+'''
+                    <tr class="comment">
+                        <td class="vote" id="r'''+str(post.id)+'''_'''+str(comment.id)+'''">
+                            <image class="vicon"src="'''+path_to['static']+'''/images/up'''+up+'''.png" onclick="submit(\''''+path_to['default']+'''/vote?up=1&comment='''+str(comment.id)+'''\', function(votes){vote(votes, \'r'''+str(post.id)+'''_'''+str(comment.id)+'''\')})" />
+                            <p>'''+str(comment.votes)+'''</p>
+                            <image class="vicon"src="'''+path_to['static']+'''/images/dn'''+dn+'''.png" onclick="submit(\''''+path_to['default']+'''/vote?up=0&comment='''+str(comment.id)+'''\', function(votes){vote(votes, \'r'''+str(post.id)+'''_'''+str(comment.id)+'''\')})" />
+                        </td>
+                        <td class="content">
+                            <span class="title">'''+comment.message+'''</span>
+                            -'''+db.users[comment.user].name+'''('''+str(db.users[comment.user].reputation)+''')
+                            <hr/>
+                        </td>
+                    </tr>
+            '''
+        return ret
+    else: return None
     
 def new_post():
     '''Accept a new post'''

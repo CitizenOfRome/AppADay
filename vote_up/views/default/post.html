@@ -116,6 +116,7 @@
             <form action="{{=path_to['default']}}/new_comment/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, 'comments', p)}); return false;">
                 <input type="text" name="message" title="Comment on this post" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
             </form>
+            <a href="JavaScript:load_moar_comments()" class="moar">Load More</a>
             <hr/>
             {{if answers!=None:}}
             {{for answer in answers:}}
@@ -154,12 +155,15 @@
             <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, '{{=answer.id}}_comments', p)}); return false;">
                 <input type="text" name="message" title="Comment on this answer" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
             </form>
+            <a href="JavaScript:load_moar_comments_r({{=answer.id}})" class="moar">Load More</a>
             <hr/>
             {{pass}}
             {{pass}}
+            <span id="master"></span>
+            <a href="JavaScript:load_moar_answers()" class="moar">Load More Answers</a>
             <div class="new_post">
                 <form action="{{=path_to['default']}}/new_response/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
-                    <p><textarea class="response" name="message"></textarea></p>
+                    <p><textarea class="response" name="message" title="Answer this Question"></textarea></p>
                     <input type="submit" value="Answer This Question" />
                 </form>
             </div>
@@ -199,6 +203,23 @@
                 }
                 if(!response["status"]) return;
                 table.innerHTML+='<tr class="comment"><td class="vote" id="r'+response["ans_id"]+"_"+response["id"]+'"><image class="vicon"src="'+path_to_static+'/images/up.png" onclick="submit(\''+path_to_default+'/vote?up=1&comment_r='+response["id"]+'\', function(votes){vote(votes, \'r'+response["ans_id"]+"_"+response["id"]+'\')})" /><p>0</p><image class="vicon"src="'+path_to_static+'/images/dn.png" onclick="submit(\''+path_to_default+'/vote?up=0&comment_r='+response["id"]+'\', function(votes){vote(votes, \'r'+response["ans_id"]+"_"+response["id"]+'\')})" /></td><td class="content"><span class="title">'+params["message"]+'</span>-'+user+'('+rep+')<hr/></td></tr>'                
+            }
+            delta = parseInt({{=session.delta}});
+            moar_c = 0;
+            function load_moar_comments() {
+                m = document.getElementById("comments");
+                return submit("{{=path_to['default']}}/moar?comment={{=post.id}}&moar="+(moar_c+delta)+"&delta="+delta, function(s) { if(s!=="") {m.innerHTML+=s; moar_c+=delta;} });
+            }
+            moar_c_r = {};
+            function load_moar_comments_r(id) {
+                m = document.getElementById(id+"_comments");
+                moar = parseInt(moar_c_r[id+"_comments"])||0;
+                return submit("{{=path_to['default']}}/moar?comment_r="+id+"&moar="+(moar+delta)+"&delta="+delta, function(s) { if(s!=="") {m.innerHTML+=s; moar_c_r[id+"_comments"]=moar+delta;} });
+            }
+            moar_a = 0;
+            function load_moar_answers() {
+                m = document.getElementById("master");
+                return submit("{{=path_to['default']}}/moar?answer={{=post.id}}&moar="+(moar_a+delta)+"&delta="+delta, function(s) { if(s!=="") {m.innerHTML+=s; moar_a+=delta;} });
             }
         </script>
         <script type="text/JavaScript" src="{{=path_to['static']}}/js/XHRSubmit.js"></script>
