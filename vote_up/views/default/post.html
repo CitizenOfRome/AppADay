@@ -22,6 +22,11 @@
                color: Navy;
                font-size:108%;
             }
+            hr{
+                display: block; height: 1px;
+                border: 0; border-top: 1px solid darkgrey;
+                margin: 1em 0; padding: 0;
+            }
             .body {
                 //width:60%;
                 margin-left:10%;
@@ -90,7 +95,7 @@
                     </td>
                 </tr>
             </table>
-            <table class="master">
+            <table id="comments" class="master">
                 {{if comments!=None:}}
                 {{for comment in comments:}}
                 <tr class="comment">
@@ -108,7 +113,7 @@
                 {{pass}}
                 {{pass}}
             </table>
-            <form action="{{=path_to['default']}}/new_comment/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
+            <form action="{{=path_to['default']}}/new_comment/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, 'comments', p)}); return false;">
                 <input type="text" name="message" title="Comment on this post" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
             </form>
             <hr/>
@@ -128,7 +133,7 @@
                     </td>
                 </tr>
             </table>
-            <table class="master">
+            <table id="{{=answer.id}}_comments" class="master">
                 {{if comments_r[answer.id]:}}
                 {{for comment in comments_r[answer.id]:}}
                 <tr class="comment">
@@ -146,7 +151,7 @@
                 {{pass}}
                 {{pass}}
             </table>
-            <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
+            <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, '{{=answer.id}}_comments', p)}); return false;">
                 <input type="text" name="message" title="Comment on this answer" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
             </form>
             <hr/>
@@ -160,6 +165,8 @@
             </div>
         </div>
         <script type="text/JavaScript">
+            user = "{{=session.user.name}}";
+            rep = {{=session.user.reputation}};
             function displayBox(message, obj) {
                 alert(message);
             }
@@ -181,6 +188,17 @@
                     document.getElementById(id).children[0].src = "{{=path_to['static']}}/images/up.png";
                     document.getElementById(id).children[2].src = "{{=path_to['static']}}/images/dn.png";
                 }
+            }
+            function comment(response, id, params) {
+                response = JSON.parse(response);
+                table = document.getElementById(id);
+                path_to_static = "{{=path_to['static']}}"
+                path_to_default = "{{=path_to['default']}}"
+                if (response.hasOwnProperty("message") && response["message"]) {
+                    displayBox(response["message"], table);
+                }
+                if(!response["status"]) return;
+                table.innerHTML+='<tr class="comment"><td class="vote" id="r'+response["ans_id"]+"_"+response["id"]+'"><image class="vicon"src="'+path_to_static+'/images/up.png" onclick="submit(\''+path_to_default+'/vote?up=1&comment_r='+response["id"]+'\', function(votes){vote(votes, \'r'+response["ans_id"]+"_"+response["id"]+'\')})" /><p>0</p><image class="vicon"src="'+path_to_static+'/images/dn.png" onclick="submit(\''+path_to_default+'/vote?up=0&comment_r='+response["id"]+'\', function(votes){vote(votes, \'r'+response["ans_id"]+"_"+response["id"]+'\')})" /></td><td class="content"><span class="title">'+params["message"]+'</span>-'+user+'('+rep+')<hr/></td></tr>'                
             }
         </script>
         <script type="text/JavaScript" src="{{=path_to['static']}}/js/XHRSubmit.js"></script>

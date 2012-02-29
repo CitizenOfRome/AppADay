@@ -54,31 +54,31 @@ def new_response():
 
 def new_comment():
     '''Accept a new comment for a post'''
-    if not request.vars.has_key("message"): return "false"
+    if not request.vars.has_key("message"): return json.dumps({"status":0,"message":"Bad Message"})
     if not session.user: return user()
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
-    if post.user!=session.user.id and session.user.reputation<20:    return json.dumps({"message":"You need atleast 20 rep to comment"})
-    post_id = db.comments.insert(
+    if post.user!=session.user.id and session.user.reputation<20:    return json.dumps({"status":0,"message":"You need atleast 20 rep to comment"})
+    id = db.comments.insert(
         message = request.vars["message"],
         post = post,
         user = session.user.id
     )
     #post = db.posts[post_id]
-    return "true"
+    return json.dumps({"status":1,"message":"", "id":id, "ans_id":post.id})
 def new_comment_r():
     '''Accept a new comment for an answer'''
-    if not request.vars.has_key("message"): return "false"
+    if not request.vars.has_key("message"): return json.dumps({"status":0,"message":"Bad Message"})
     if not session.user: return user()
     path_to=session.path_to
     answer=db(db.answers.id == request.args[0]).select().first()
-    if answer.user!=session.user.id and session.user.reputation<20:    return json.dumps({"message":"You need atleast 20 rep to comment"})
-    db.comments_r.insert(
+    if answer.user!=session.user.id and session.user.reputation<20:    return json.dumps({"status":0,"message":"You need atleast 20 rep to comment"})
+    id = db.comments_r.insert(
         message = request.vars["message"],
         answer = answer,
         user = session.user.id
     )
-    return "true"
+    return json.dumps({"status":1,"message":"", "id":id, "ans_id":answer.id})
     
 def vote():
     '''Add a vote'''
@@ -98,9 +98,9 @@ def vote():
         var = db(db.comments_r.id == request.vars["comment_r"]).select().first()
         factor=2
     else: return None
-    if session.user.reputation<15:    return json.dumps({"votes":0, "status":0, "message":"You need atleast 15 rep to vote"})
     user = db.users[var.user]
     if user.id==session.user.id:  return json.dumps({"votes":var.votes, "status":0, "message":"You cannot vote on your own content"})
+    if session.user.reputation<15:    return json.dumps({"votes":0, "status":0, "message":"You need atleast 15 rep to vote"})
     inc = 0
     in2 = 0
     add = [session.user.id]

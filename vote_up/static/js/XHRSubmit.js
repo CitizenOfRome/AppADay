@@ -1,4 +1,4 @@
-function submit(url, callback, method, params) {
+function submit(url, callback, method, params, par) {
     method = method||"GET";
     method = method.toUpperCase();
     params = params||null;
@@ -6,7 +6,7 @@ function submit(url, callback, method, params) {
     ajax.onreadystatechange=function() {
         if(ajax.readyState===4) {
             //if(ajax.responseText!=="1" || ajax.status>=400) return submit(url, method, params);
-            if(callback)    callback(ajax.responseText);
+            if(callback)    callback(ajax.responseText, par);
         }
     };
     if(method==="GET" && params!==null) {
@@ -42,8 +42,8 @@ function get_value(element, form) {
             return false;
     }
 }
-function post_form(form, callback) {
-    var params="", add="", names=[];
+function post_form(form, callback, callbefore) {
+    var params="", add="", names=[], par={};
     url = form.action;
     method = form.method;
     for(i=0;i<form.length;i++) {
@@ -52,8 +52,10 @@ function post_form(form, callback) {
         value = get_value(form[i], form);
         if(value===false)   continue;
         params = params+add+form[i].name+"="+value;
+        par[form[i].name] = value;
         add = "&";
     }
-    form.reset();
-    return submit(url, callback, method, params);
+    if(callbefore)  callbefore(par);
+    else    form.reset();
+    return submit(url, callback, method, params, par);
 }
