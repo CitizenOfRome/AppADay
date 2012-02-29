@@ -6,87 +6,168 @@
         <meta http-equiv="Content-Language" content="EN" />
         <meta name="keywords" content="vote up" />
         <style type="text/css">
-            .new_post {
-                float:right;
-                border-style: solid;
+            body {
+               margin:0;
+               padding:0;
+               border:0px;
+               height:100%;
+               width:100%;
+               overflow:auto;
+               font-family:Perpetua, Georgia, Consolas;
+               min-height:480px;
+               min-width:320px;
+               position: absolute;
+               top:0%;
+               left:0%;
+               color: Navy;
+               font-size:108%;
+            }
+            .body {
+                //width:60%;
+                margin-left:10%;
+                margin-right:10%;
+                text-align:center;
+            }
+            .master {
+                text-align:left;
+                /*border-style: solid;
                 border-width: 2px;
-                border-color: grey;
-                margin-right:2px;
+                border-color: grey;*/
+            }
+            .vote {
+                width:10px;
+                text-align:center;
+                vertical-align:top;
+            }
+            .content {
+                padding-left:25px;
             }
             .post {
-                width:100%;
-                font-size:120%;
+                font-size:130%;
             }
-            .cvote,.vote {
-                float:right;
+            .comment {
+                height:20px;
+                width:10px;
+            }
+            .new_post {
+                /*float:right;
+                border-style: solid;
+                border-width: 2px;
+                border-color: navy;
+                margin-right:2px;*/
+            }
+            .vicon {
+                height: 30px;
+                width: 30px;
+            }
+            .response {
+                height:140px;
+                width:80%;
+                border-style: solid;
+                border-width: 2px;
+                border-color: navy;
             }
         </style>
     </head>
     <body>
-        <div class="new_post">
-            <form action="{{=path_to['default']}}/new_response/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
-                <p><textarea name="message"></textarea></p>
-                <input type="submit" value="Create New Response" />
-            </form>
-        </div>
-        <div class="post">
-            <div class="vote" id="{{=post.id}}">
-                <image src="{{=path_to['static']}}/images/up{{if post.v_up and session.user.id in post.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
-                <p>{{=post.votes}}</p>
-                <image src="{{=path_to['static']}}/images/dn{{if post.v_dn and session.user.id in post.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
-            </div><br/>
-            <h3>{{=post.title}}</h3>
-            <p>{{=post.message}}</p>
-            <br/>
-            {{if comments!=None:}}
-            {{for comment in comments:}}
-            <div class="comment">
-            <div class="cvote" id="{{=post.id}}_{{=comment.id}}">
-                <image src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
-                <p>{{=comment.votes}}</p>
-                <image src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
-            </div><br/>
-            <span class="title">{{=comment.message}}</span>
-            </div>
-            {{pass}}
-            {{pass}}
+        <span style="float:right">
+            {{=session.user.name}}({{=session.user.reputation}})
+            <a href="{{=path_to['default']}}/user" title="Click to LogOut">Logout</a>
+        </span>
+        <h3><a href="{{=path_to['default']}}">Home</a></h3>
+        <div class="body">
+            <h2>{{=post.title}}</h2><hr/>
+            <table class="master">
+                <tr class="post">
+                    <td class="vote" id="{{=post.id}}">
+                        <image class="vicon"src="{{=path_to['static']}}/images/up{{if post.v_up and session.user.id in post.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
+                        <p>{{=post.votes}}</p>
+                        <image class="vicon"src="{{=path_to['static']}}/images/dn{{if post.v_dn and session.user.id in post.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
+                    </td>
+                    <td class="content">
+                        <p>{{=post.message}}</p>
+                        -{{=db.users[post.user].name}}({{=db.users[post.user].reputation}})
+                    </td>
+                </tr>
+            </table>
+            <table class="master">
+                {{if comments!=None:}}
+                {{for comment in comments:}}
+                <tr class="comment">
+                    <td class="vote" id="{{=post.id}}_{{=comment.id}}">
+                        <image class="vicon"src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
+                        <p>{{=comment.votes}}</p>
+                        <image class="vicon"src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
+                    </td>
+                    <td class="content">
+                        <span class="title">{{=comment.message}}</span>
+                        -{{=db.users[comment.user].name}}({{=db.users[comment.user].reputation}})
+                        <hr/>
+                    </td>
+                </tr>
+                {{pass}}
+                {{pass}}
+            </table>
             <form action="{{=path_to['default']}}/new_comment/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
-                <input type="text" name="message" /><input type="submit" value="Add Comment"/>
+                <input type="text" name="message" title="Comment on this post" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
             </form>
             <hr/>
-        </div>
-        {{if answers!=None:}}
-        {{for answer in answers:}}
-        <div class="answer">
-            <div class="vote" id="r{{=answer.id}}">
-                <image src="{{=path_to['static']}}/images/up{{if answer.v_up and session.user.id in answer.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
-                <p>{{=answer.votes}}</p>
-                <image src="{{=path_to['static']}}/images/dn{{if answer.v_dn and session.user.id in answer.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
-            </div><br/>
-            <p>{{=answer.message}}</p>
-            <br/>
-            {{if comments_r[answer.id]:}}
-            {{for comment in comments_r[answer.id]:}}
-            <div class="comment">
-            <div class="cvote" id="r{{=answer.id}}_{{=comment.id}}">
-                <image src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
-                <p>{{=comment.votes}}</p>
-                <image src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
-            </div><br/>
-            <span class="title">{{=comment.message}}</span>
-            </div>
-            {{pass}}
-            {{pass}}
+            {{if answers!=None:}}
+            {{for answer in answers:}}
+            <table class="master">
+                <tr class="answer">
+                    <td class="vote" id="r{{=answer.id}}">
+                        <image class="vicon"src="{{=path_to['static']}}/images/up{{if answer.v_up and session.user.id in answer.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
+                        <p>{{=answer.votes}}</p>
+                        <image class="vicon"src="{{=path_to['static']}}/images/dn{{if answer.v_dn and session.user.id in answer.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
+                    </td>
+                    <td class="content">
+                        <p>{{=answer.message}}</p>
+                        -{{=db.users[answer.user].name}}({{=db.users[answer.user].reputation}})
+                        </span>
+                    </td>
+                </tr>
+            </table>
+            <table class="master">
+                {{if comments_r[answer.id]:}}
+                {{for comment in comments_r[answer.id]:}}
+                <tr class="comment">
+                    <td class="vote" id="r{{=answer.id}}_{{=comment.id}}">
+                        <image class="vicon"src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
+                        <p>{{=comment.votes}}</p>
+                        <image class="vicon"src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
+                    </td>
+                    <td class="content">
+                        <span class="title">{{=comment.message}}</span>
+                        -{{=db.users[comment.user].name}}({{=db.users[comment.user].reputation}})
+                        <hr/>
+                    </td>
+                </tr>
+                {{pass}}
+                {{pass}}
+            </table>
             <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
-                <input type="text" name="message" /><input type="submit" value="Add Comment"/>
+                <input type="text" name="message" title="Comment on this answer" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
             </form>
             <hr/>
+            {{pass}}
+            {{pass}}
+            <div class="new_post">
+                <form action="{{=path_to['default']}}/new_response/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
+                    <p><textarea class="response" name="message"></textarea></p>
+                    <input type="submit" value="Answer This Question" />
+                </form>
+            </div>
         </div>
-        {{pass}}
-        {{pass}}
         <script type="text/JavaScript">
+            function displayBox(message, obj) {
+                alert(message);
+            }
             function vote(response, id) {
                 response = JSON.parse(response);
+                if (response.hasOwnProperty("message") && response["message"]) {
+                    displayBox(response["message"], document.getElementById(id).children[1]);
+                }
                 document.getElementById(id).children[1].innerHTML=response["votes"];
                 if(response["status"]===1) {
                     document.getElementById(id).children[0].src = "{{=path_to['static']}}/images/up_h.png";

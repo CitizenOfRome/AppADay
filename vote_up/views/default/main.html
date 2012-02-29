@@ -20,7 +20,15 @@
         </style>
     </head>
     <body>
+        <span style="float:right">
+            {{=session.user.name}}({{=session.user.reputation}})
+            <a href="{{=path_to['default']}}/user">Logout/in</a>
+        </span>
+        <h1>Vote up!</h1>
+        <hr/>
+        <h3>Posts:</h3>
         <div class="new_post">
+            <h4>New Post:</h4>
             <form action="{{=path_to['default']}}/new_post" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
                 <h3><input type="text" name="title" /></h3>
                 <p><textarea name="message"></textarea></p>
