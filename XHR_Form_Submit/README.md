@@ -8,7 +8,7 @@ To use it, simply include the JavaScript and add an onsubmit to your form-elemen
     
 Where, my_callback is called with the XHR_responseText as its parameter, like: 
 
-    my_callback = function(xhr_response){...}
+    my_callback = function(string xhr_response, dict original_form_parameters){...}
 
 Licence: http://creativecommons.org/licenses/by-nc-sa/3.0/
 -----------------------------------------------------------
