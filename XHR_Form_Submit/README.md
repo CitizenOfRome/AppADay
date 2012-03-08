@@ -1,4 +1,4 @@
-XHR-Form-Submit: Feb 16th 2012
+XHR-Form-Submit: (Started) Feb 16th 2012
 -----------------------------------------------------------
 This script allows you to easily submit forms via XHR(ajax).
 
