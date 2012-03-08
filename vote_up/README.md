@@ -1,4 +1,4 @@
-Vote-Up: Feb 13th, 16th, 18th to 29th 2012
+Vote-Up: Started-Feb 13th 2012
 -----------------------
 Vote-up is a Stack-Exchange-inspired rating system where you can create, vote upon and respond to posts.
 

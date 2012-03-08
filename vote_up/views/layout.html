@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Vote-Up</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="Content-Language" content="EN" />
+        <meta name="keywords" content="vote up" />
+        <link rel="stylesheet" type="text/css" href="{{=path_to['static']}}/css/reset.css" />
+        <style type="text/css">
+            body {
+               height:100%;
+               width:94%;
+               font-family:Perpetua, Georgia, Consolas;
+               min-height:600px;
+               min-width:800px;
+               position: absolute;
+               top:0%;
+               left:3%;
+               color: Navy;
+               font-size:108%;
+            }
+            hr{
+                display: block; height: 1px;
+                border: 0; border-top: 1px solid darkgrey;
+                margin: 1em 0; padding: 0;
+            }
+        </style>
+        <script type="text/JavaScript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/JavaScript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css" />
+    </head>
+    <body>
+        <header>
+            <span style="float:right" data-role="header" data-type="horizontal" data-position="inline">
+                {{=session.user.name}}({{=session.user.reputation}})
+                <a href="{{=path_to['default']}}/user">Logout</a><br/>
+                <a href="{{=path_to['default']}}/new_post">New Post</a>
+            </span>
+            <h1 data-role="header"><a href="{{=path_to['default']}}">Vote up!</a></h1>
+        </header>
+        <hr/>
+        {{include}}
+        <script type="text/JavaScript" src="{{=path_to['static']}}/js/XHRSubmit.js"></script>
+    </body>
+</html>

@@ -51,6 +51,7 @@ function post_form(form, callback, callbefore) {
         names.push(form[i].name);
         value = get_value(form[i], form);
         if(value===false)   continue;
+        value = encodeURIComponent(value);
         params = params+add+form[i].name+"="+value;
         par[form[i].name] = value;
         add = "&";

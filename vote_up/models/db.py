@@ -79,6 +79,7 @@ use_janrain(auth,filename='private/janrain.key')
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 from datetime import datetime
+db.define_table('tags', db.Field('name', 'string'), db.Field('desc', 'text'))
 db.define_table('posts', 
     db.Field('title', 'string'),
     db.Field('message', 'text'),
@@ -86,10 +87,11 @@ db.define_table('posts',
     db.Field('votes', 'integer', default=0),
     db.Field('v_up', 'list:reference users'),
     db.Field('v_dn', 'list:reference users'),
+    db.Field('tags', 'list:reference tags'),
     db.Field('time', 'datetime', default=datetime.utcnow())
 )
 db.define_table('answers',
-    db.Field('message', 'string'),
+    db.Field('message', 'text'),
     db.Field('post', db.posts),
     db.Field('user', 'reference users'),
     db.Field('votes', 'integer', default=0),

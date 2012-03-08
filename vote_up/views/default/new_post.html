@@ -1,0 +1,38 @@
+{{extend "layout.html"}}
+<h3>Create A New Post:</h3>
+<div class="new_post">
+    <h4>New Post:</h4>
+    <form action="{{=path_to['default']}}/new_post" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
+        <h3><input type="text" name="title" /></h3>
+        <p><textarea name="message"></textarea></p>
+        <input type="text" id="tags" onkeyup="window.submit('{{=path_to['default']}}/suggest_tags?tag='+this.value, suggest_tags)" />
+        <input type="hidden" id="tagSent" name="tags" />
+        <p id="sug"></p>
+        <input type="submit" value="Create New Post" />
+    </form>
+</div>
+<script type="text/JavaScript">
+    function displayBox(message, obj) {
+        alert(message);
+    }
+    function suggest_tags(response) {
+        response = JSON.parse(response);
+        if (response.hasOwnProperty("message") && response["message"]) {
+            displayBox(response["message"], document.getElementById(id).children[1]);
+        }
+        res = "<table class='tags'><tr>";
+        i = 1;
+        for(ob in response["tags"]) {
+            if(i==4)    res+="</tr><tr>";
+            res+='<td class="tag_box"><a href="#" onclick="add_tag(this)"><span class="tag" id="'+response["tags"][ob][0]+'">'+response["tags"][ob][0]+'</span><br/><span class="tag_desc" id="'+response["tags"][ob][0]+'_desc">'+response["tags"][ob][1]+'</span></a></td>';
+            i+=1;
+        }
+        res += "</tr></table>";
+        document.getElementById("sug").innerHTML = res;
+    }
+    function add_tag(obj) {
+        alert(obj.children[0].innerHTML+"="+obj.children[2].innerHTML);
+        tags = document.getElementById("tags");
+        alert(tags.offsetTop);
+    }
+</script>

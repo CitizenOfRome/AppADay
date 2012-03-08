@@ -3,9 +3,9 @@
 <table class="master">
     <tr class="answer">
         <td class="vote" id="r{{=answer.id}}">
-            <image class="vicon"src="{{=path_to['static']}}/images/up{{if answer.v_up and session.user.id in answer.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
+            <image class="vicon" src="{{=path_to['static']}}/images/up{{if answer.v_up and session.user.id in answer.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
             <p>{{=answer.votes}}</p>
-            <image class="vicon"src="{{=path_to['static']}}/images/dn{{if answer.v_dn and session.user.id in answer.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
+            <image class="vicon" src="{{=path_to['static']}}/images/dn{{if answer.v_dn and session.user.id in answer.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
         </td>
         <td class="content">
             <p>{{=answer.message}}</p>
@@ -19,9 +19,9 @@
     {{for comment in comments_r[answer.id]:}}
     <tr class="comment">
         <td class="vote" id="r{{=answer.id}}_{{=comment.id}}">
-            <image class="vicon"src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
+            <image class="vicon" src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
             <p>{{=comment.votes}}</p>
-            <image class="vicon"src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
+            <image class="vicon" src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
         </td>
         <td class="content">
             <span class="title">{{=comment.message}}</span>
@@ -35,6 +35,7 @@
 <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, '{{=answer.id}}_comments', p)}); return false;">
     <input type="text" name="message" title="Comment on this answer" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
 </form>
+<a href="JavaScript:load_moar_comments_r({{=answer.id}})" id="m_{{=answer.id}}" class="moar">Load More</a>
 <hr/>
 {{pass}}
 {{pass}}

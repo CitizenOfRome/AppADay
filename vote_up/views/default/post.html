@@ -1,227 +1,184 @@
-<!DOCTYPE HTML>
-<html lang="en">
-    <head>
-        <title>Vote-Up</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta http-equiv="Content-Language" content="EN" />
-        <meta name="keywords" content="vote up" />
-        <style type="text/css">
-            body {
-               margin:0;
-               padding:0;
-               border:0px;
-               height:100%;
-               width:100%;
-               overflow:auto;
-               font-family:Perpetua, Georgia, Consolas;
-               min-height:480px;
-               min-width:320px;
-               position: absolute;
-               top:0%;
-               left:0%;
-               color: Navy;
-               font-size:108%;
-            }
-            hr{
-                display: block; height: 1px;
-                border: 0; border-top: 1px solid darkgrey;
-                margin: 1em 0; padding: 0;
-            }
-            .body {
-                //width:60%;
-                margin-left:10%;
-                margin-right:10%;
-                text-align:center;
-            }
-            .master {
-                text-align:left;
-                /*border-style: solid;
-                border-width: 2px;
-                border-color: grey;*/
-            }
-            .vote {
-                width:10px;
-                text-align:center;
-                vertical-align:top;
-            }
-            .content {
-                padding-left:25px;
-            }
-            .post {
-                font-size:130%;
-            }
-            .comment {
-                height:20px;
-                width:10px;
-            }
-            .new_post {
-                /*float:right;
-                border-style: solid;
-                border-width: 2px;
-                border-color: navy;
-                margin-right:2px;*/
-            }
-            .vicon {
-                height: 30px;
-                width: 30px;
-            }
-            .response {
-                height:140px;
-                width:80%;
-                border-style: solid;
-                border-width: 2px;
-                border-color: navy;
-            }
-        </style>
-    </head>
-    <body>
-        <span style="float:right">
-            {{=session.user.name}}({{=session.user.reputation}})
-            <a href="{{=path_to['default']}}/user" title="Click to LogOut">Logout</a>
-        </span>
-        <h3><a href="{{=path_to['default']}}">Home</a></h3>
-        <div class="body">
-            <h2>{{=post.title}}</h2><hr/>
-            <table class="master">
-                <tr class="post">
-                    <td class="vote" id="{{=post.id}}">
-                        <image class="vicon"src="{{=path_to['static']}}/images/up{{if post.v_up and session.user.id in post.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
-                        <p>{{=post.votes}}</p>
-                        <image class="vicon"src="{{=path_to['static']}}/images/dn{{if post.v_dn and session.user.id in post.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
-                    </td>
-                    <td class="content">
-                        <p>{{=post.message}}</p>
-                        -{{=db.users[post.user].name}}({{=db.users[post.user].reputation}})
-                    </td>
-                </tr>
-            </table>
-            <table id="comments" class="master">
-                {{if comments!=None:}}
-                {{for comment in comments:}}
-                <tr class="comment">
-                    <td class="vote" id="{{=post.id}}_{{=comment.id}}">
-                        <image class="vicon"src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
-                        <p>{{=comment.votes}}</p>
-                        <image class="vicon"src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
-                    </td>
-                    <td class="content">
-                        <span class="title">{{=comment.message}}</span>
-                        -{{=db.users[comment.user].name}}({{=db.users[comment.user].reputation}})
-                        <hr/>
-                    </td>
-                </tr>
-                {{pass}}
-                {{pass}}
-            </table>
-            <form action="{{=path_to['default']}}/new_comment/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, 'comments', p)}); return false;">
-                <input type="text" name="message" title="Comment on this post" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
-            </form>
-            <a href="JavaScript:load_moar_comments()" class="moar">Load More</a>
-            <hr/>
-            {{if answers!=None:}}
-            {{for answer in answers:}}
-            <table class="master">
-                <tr class="answer">
-                    <td class="vote" id="r{{=answer.id}}">
-                        <image class="vicon"src="{{=path_to['static']}}/images/up{{if answer.v_up and session.user.id in answer.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
-                        <p>{{=answer.votes}}</p>
-                        <image class="vicon"src="{{=path_to['static']}}/images/dn{{if answer.v_dn and session.user.id in answer.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
-                    </td>
-                    <td class="content">
-                        <p>{{=answer.message}}</p>
-                        -{{=db.users[answer.user].name}}({{=db.users[answer.user].reputation}})
-                        </span>
-                    </td>
-                </tr>
-            </table>
-            <table id="{{=answer.id}}_comments" class="master">
-                {{if comments_r[answer.id]:}}
-                {{for comment in comments_r[answer.id]:}}
-                <tr class="comment">
-                    <td class="vote" id="r{{=answer.id}}_{{=comment.id}}">
-                        <image class="vicon"src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
-                        <p>{{=comment.votes}}</p>
-                        <image class="vicon"src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
-                    </td>
-                    <td class="content">
-                        <span class="title">{{=comment.message}}</span>
-                        -{{=db.users[comment.user].name}}({{=db.users[comment.user].reputation}})
-                        <hr/>
-                    </td>
-                </tr>
-                {{pass}}
-                {{pass}}
-            </table>
-            <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, '{{=answer.id}}_comments', p)}); return false;">
-                <input type="text" name="message" title="Comment on this answer" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
-            </form>
-            <a href="JavaScript:load_moar_comments_r({{=answer.id}})" class="moar">Load More</a>
-            <hr/>
-            {{pass}}
-            {{pass}}
-            <span id="master"></span>
-            <a href="JavaScript:load_moar_answers()" class="moar">Load More Answers</a>
-            <div class="new_post">
-                <form action="{{=path_to['default']}}/new_response/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
-                    <p><textarea class="response" name="message" title="Answer this Question"></textarea></p>
-                    <input type="submit" value="Answer This Question" />
-                </form>
-            </div>
-        </div>
-        <script type="text/JavaScript">
-            user = "{{=session.user.name}}";
-            rep = {{=session.user.reputation}};
-            function displayBox(message, obj) {
-                alert(message);
-            }
-            function vote(response, id) {
-                response = JSON.parse(response);
-                if (response.hasOwnProperty("message") && response["message"]) {
-                    displayBox(response["message"], document.getElementById(id).children[1]);
-                }
-                document.getElementById(id).children[1].innerHTML=response["votes"];
-                if(response["status"]===1) {
-                    document.getElementById(id).children[0].src = "{{=path_to['static']}}/images/up_h.png";
-                    document.getElementById(id).children[2].src = "{{=path_to['static']}}/images/dn.png";
-                }
-                if(response["status"]===-1) {
-                    document.getElementById(id).children[0].src = "{{=path_to['static']}}/images/up.png";
-                    document.getElementById(id).children[2].src = "{{=path_to['static']}}/images/dn_h.png";
-                }
-                if(response["status"]===0) {
-                    document.getElementById(id).children[0].src = "{{=path_to['static']}}/images/up.png";
-                    document.getElementById(id).children[2].src = "{{=path_to['static']}}/images/dn.png";
+{{extend "layout.html"}}
+<style type="text/css">
+    .body {
+        //width:60%;
+        margin-left:10%;
+        margin-right:10%;
+        text-align:center;
+    }
+    .master {
+        text-align:left;
+        /*border-style: solid;
+        border-width: 2px;
+        border-color: grey;*/
+    }
+    .vote {
+        width:10px;
+        text-align:center;
+        vertical-align:top;
+    }
+    .content {
+        padding-left:25px;
+    }
+    .post {
+        font-size:135%;
+    }
+    .answer {
+        font-size:127%;
+    }
+    .comment {
+        height:20px;
+        width:10px;
+        font-size:110%;
+    }
+    .new_post {
+        /*float:right;
+        border-style: solid;
+        border-width: 2px;
+        border-color: navy;
+        margin-right:2px;*/
+    }
+    .vicon {
+        height: 30px;
+        width: 30px;
+    }
+    .response {
+        height:140px;
+        width:80%;
+        border-style: solid;
+        border-width: 2px;
+        border-color: navy;
+    }
+</style>
+<div class="body">
+    <h2>{{=post.title}}</h2><hr/>
+    <table class="master">
+        <tr class="post">
+            <td class="vote" id="{{=post.id}}">
+                <image class="vicon" src="{{=path_to['static']}}/images/up{{if post.v_up and session.user.id in post.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
+                <p>{{=post.votes}}</p>
+                <image class="vicon" src="{{=path_to['static']}}/images/dn{{if post.v_dn and session.user.id in post.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
+            </td>
+            <td class="content">
+                <p>{{=post.message}}</p>
+                -{{=db.users[post.user].name}}({{=db.users[post.user].reputation}})
+            </td>
+        </tr>
+    </table>
+    <table id="comments" class="master">
+        {{if comments!=None:}}
+        {{for comment in comments:}}
+        <tr class="comment">
+            <td class="vote" id="{{=post.id}}_{{=comment.id}}">
+                <image class="vicon" src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
+                <p>{{=comment.votes}}</p>
+                <image class="vicon" src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
+            </td>
+            <td class="content">
+                <span class="title">{{=comment.message}}</span>
+                -{{=db.users[comment.user].name}}({{=db.users[comment.user].reputation}})
+                <hr/>
+            </td>
+        </tr>
+        {{pass}}
+        {{pass}}
+    </table>
+    <form action="{{=path_to['default']}}/new_comment/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, 'comments', p)}); return false;">
+        <input type="text" name="message" title="Comment on this post" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
+    </form>
+    <a href="JavaScript:load_moar_comments()" id="m_comments" class="moar">Load More</a>
+    <hr/>
+    {{include "default/post_delta.html"}}
+    <span id="master"></span>
+    <a href="JavaScript:load_moar_answers()" id="m_master" class="moar">Load More Answers</a>
+    <div class="new_post">
+        <form action="{{=path_to['default']}}/new_response/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
+            <p><textarea class="response" name="message" title="Answer this Question"></textarea></p>
+            <input type="submit" value="Answer This Question" />
+        </form>
+    </div>
+</div>
+<script type="text/JavaScript">
+    user = "{{=session.user.name}}";
+    rep = {{=session.user.reputation}};
+    function displayBox(message, obj) {
+        alert(message);
+    }
+    function vote(response, id) {
+        response = JSON.parse(response);
+        if (response.hasOwnProperty("message") && response["message"]) {
+            displayBox(response["message"], document.getElementById(id).children[1]);
+        }
+        document.getElementById(id).children[1].innerHTML=response["votes"];
+        if(response["status"]===1) {
+            document.getElementById(id).children[0].src = "{{=path_to['static']}}/images/up_h.png";
+            document.getElementById(id).children[2].src = "{{=path_to['static']}}/images/dn.png";
+        }
+        if(response["status"]===-1) {
+            document.getElementById(id).children[0].src = "{{=path_to['static']}}/images/up.png";
+            document.getElementById(id).children[2].src = "{{=path_to['static']}}/images/dn_h.png";
+        }
+        if(response["status"]===0) {
+            document.getElementById(id).children[0].src = "{{=path_to['static']}}/images/up.png";
+            document.getElementById(id).children[2].src = "{{=path_to['static']}}/images/dn.png";
+        }
+    }
+    function comment(response, id, params) {
+        response = JSON.parse(response);
+        table = document.getElementById(id);
+        path_to_static = "{{=path_to['static']}}"
+        path_to_default = "{{=path_to['default']}}"
+        if (response.hasOwnProperty("message") && response["message"]) {
+            displayBox(response["message"], table);
+        }
+        if(!response["status"]) return;
+        table.innerHTML+='<tr class="comment"><td class="vote" id="r'+response["ans_id"]+"_"+response["id"]+'"><image class="vicon" src="'+path_to_static+'/images/up.png" onclick="submit(\''+path_to_default+'/vote?up=1&comment_r='+response["id"]+'\', function(votes){vote(votes, \'r'+response["ans_id"]+"_"+response["id"]+'\')})" /><p>0</p><image class="vicon" src="'+path_to_static+'/images/dn.png" onclick="submit(\''+path_to_default+'/vote?up=0&comment_r='+response["id"]+'\', function(votes){vote(votes, \'r'+response["ans_id"]+"_"+response["id"]+'\')})" /></td><td class="content"><span class="title">'+params["message"]+'</span>-'+user+'('+rep+')<hr/></td></tr>'                
+    }
+    delta = parseInt({{=session.delta}});
+    moar_c = 0;
+    function load_moar_comments() {
+        m = document.getElementById("comments");
+        return submit("{{=path_to['default']}}/moar?comment={{=post.id}}&moar="+(moar_c+delta)+"&delta="+delta,
+            function(s) {
+                if(s!=="") {
+                    m.innerHTML+=s;
+                    moar_c+=delta;
+                } 
+                else {
+                    document.getElementById("m_comments").innerHTML="";
                 }
             }
-            function comment(response, id, params) {
-                response = JSON.parse(response);
-                table = document.getElementById(id);
-                path_to_static = "{{=path_to['static']}}"
-                path_to_default = "{{=path_to['default']}}"
-                if (response.hasOwnProperty("message") && response["message"]) {
-                    displayBox(response["message"], table);
+        );
+    }
+    moar_c_r = {};
+    function load_moar_comments_r(id) {
+        m = document.getElementById(id+"_comments");
+        moar = parseInt(moar_c_r[id+"_comments"])||0;
+        return submit("{{=path_to['default']}}/moar?comment_r="+id+"&moar="+(moar+delta)+"&delta="+delta,
+            function(s) {
+                if(s!=="") {
+                    m.innerHTML+=s;
+                    moar_c_r[id+"_comments"]=moar+delta;
                 }
-                if(!response["status"]) return;
-                table.innerHTML+='<tr class="comment"><td class="vote" id="r'+response["ans_id"]+"_"+response["id"]+'"><image class="vicon"src="'+path_to_static+'/images/up.png" onclick="submit(\''+path_to_default+'/vote?up=1&comment_r='+response["id"]+'\', function(votes){vote(votes, \'r'+response["ans_id"]+"_"+response["id"]+'\')})" /><p>0</p><image class="vicon"src="'+path_to_static+'/images/dn.png" onclick="submit(\''+path_to_default+'/vote?up=0&comment_r='+response["id"]+'\', function(votes){vote(votes, \'r'+response["ans_id"]+"_"+response["id"]+'\')})" /></td><td class="content"><span class="title">'+params["message"]+'</span>-'+user+'('+rep+')<hr/></td></tr>'                
+                else {
+                    document.getElementById("m_"+id).innerHTML="";
+                }
             }
-            delta = parseInt({{=session.delta}});
-            moar_c = 0;
-            function load_moar_comments() {
-                m = document.getElementById("comments");
-                return submit("{{=path_to['default']}}/moar?comment={{=post.id}}&moar="+(moar_c+delta)+"&delta="+delta, function(s) { if(s!=="") {m.innerHTML+=s; moar_c+=delta;} });
+        );
+    }
+    moar_a = 0;
+    function load_moar_answers() {
+        m = document.getElementById("master");
+        return submit("{{=path_to['default']}}/moar?answer={{=post.id}}&moar="+(moar_a+delta)+"&delta="+delta, 
+            function(s) { 
+                if(s!=="") {
+                    m.innerHTML+=s;
+                    moar_a+=delta;
+                }
+                else {
+                    document.getElementById("m_master").innerHTML="";
+                }
             }
-            moar_c_r = {};
-            function load_moar_comments_r(id) {
-                m = document.getElementById(id+"_comments");
-                moar = parseInt(moar_c_r[id+"_comments"])||0;
-                return submit("{{=path_to['default']}}/moar?comment_r="+id+"&moar="+(moar+delta)+"&delta="+delta, function(s) { if(s!=="") {m.innerHTML+=s; moar_c_r[id+"_comments"]=moar+delta;} });
-            }
-            moar_a = 0;
-            function load_moar_answers() {
-                m = document.getElementById("master");
-                return submit("{{=path_to['default']}}/moar?answer={{=post.id}}&moar="+(moar_a+delta)+"&delta="+delta, function(s) { if(s!=="") {m.innerHTML+=s; moar_a+=delta;} });
-            }
-        </script>
-        <script type="text/JavaScript" src="{{=path_to['static']}}/js/XHRSubmit.js"></script>
-    </body>
-</html>
+        );
+    }
+</script>

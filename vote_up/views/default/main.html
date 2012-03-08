@@ -1,79 +1,36 @@
-<!DOCTYPE HTML>
-<html lang="en">
-    <head>
-        <title>Vote-Up</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta http-equiv="Content-Language" content="EN" />
-        <meta name="keywords" content="vote up" />
-        <style type="text/css">
-            body {
-               margin:0;
-               padding:0;
-               border:0px;
-               height:100%;
-               width:94%;
-               overflow:auto;
-               font-family:Perpetua, Georgia, Consolas;
-               min-height:480px;
-               min-width:320px;
-               position: absolute;
-               top:0%;
-               left:3%;
-               color: Navy;
-               font-size:108%;
+{{extend "layout.html"}}
+<style type="text/css">
+    .post {
+        width:100%;
+        font-size:120%;
+    }
+</style>
+<h3>Posts:</h3>
+{{for post in posts:}}
+<div class="post"><a href="{{=path_to['default']}}/get_post/{{=post.id}}">
+    <span class="vote">{{=post.votes}}</span>
+    <span class="title">{{=post.title}}</span>
+    <span class="name">-{{=db.users[post.user].name}}</span>
+    <span class="rep">({{=db.users[post.user].reputation}})</span>
+</a></div>
+{{pass}}
+<span id="moar"></span>
+<a href="JavaScript:load_moar()" id="m_moar" class="moar">Load More</a>
+<script type="text/JavaScript">
+    moar = 0;
+    delta = parseInt({{=session.delta}});
+    function load_moar() {
+        m = document.getElementById("moar");
+        return submit("{{=path_to['default']}}/moar?post=1&moar="+parseInt(moar+delta)+"&delta="+delta,
+            function(s) {
+                if(s!=="") {
+                    m.innerHTML+=s;
+                    moar+=delta;
+                }
+                else {
+                    document.getElementById("m_moar").innerHTML="";
+                }
             }
-            hr{
-                display: block; height: 1px;
-                border: 0; border-top: 2px solid darkgrey;
-                margin: 1em 0; padding: 0;
-            }
-            .new_post {
-                float:right;
-                border-style: solid;
-                border-width: 2px;
-                border-color: grey;
-                margin-right:2px;
-            }
-            .post {
-                width:100%;
-                font-size:120%;
-            }
-        </style>
-    </head>
-    <body>
-        <span style="float:right">
-            {{=session.user.name}}({{=session.user.reputation}})
-            <a href="{{=path_to['default']}}/user">Logout</a>
-        </span>
-        <h1>Vote up!</h1>
-        <hr/>
-        <h3>Posts:</h3>
-        <div class="new_post">
-            <h4>New Post:</h4>
-            <form action="{{=path_to['default']}}/new_post" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
-                <h3><input type="text" name="title" /></h3>
-                <p><textarea name="message"></textarea></p>
-                <input type="submit" value="Create New Post" />
-            </form>
-        </div>
-        {{for post in posts:}}
-        <div class="post"><a href="{{=path_to['default']}}/get_post/{{=post.id}}">
-            <span class="vote">{{=post.votes}}</span>
-            <span class="title">{{=post.title}}</span>
-            <span class="name">-{{=db.users[post.user].name}}</span>
-            <span class="rep">({{=db.users[post.user].reputation}})</span>
-        </a></div>
-        {{pass}}
-        <span id="moar"></span>
-        <a href="JavaScript:load_moar()" class="moar">Load More</a>
-        <script type="text/JavaScript">
-            moar = 0;
-            delta = parseInt({{=session.delta}});
-            function load_moar() {
-                m = document.getElementById("moar");
-                return submit("{{=path_to['default']}}/moar?post=1&moar="+parseInt(moar+delta)+"&delta="+delta, function(s) { if(s!=="") {m.innerHTML+=s; moar+=delta;} });
-            }
-        </script>
-        <script type="text/JavaScript" src="{{=path_to['static']}}/js/XHRSubmit.js"></script>
-    </body>
-</html>
+        );
+    }
+</script>
