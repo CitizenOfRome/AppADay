@@ -5,7 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="Content-Language" content="EN" />
         <meta name="keywords" content="vote up" />
-        <link rel="stylesheet" type="text/css" href="{{=path_to['static']}}/css/reset.css" />
+        <link rel="stylesheet" type="text/css" href="{{=session.path_to['static']}}/css/reset.css" />
         <style type="text/css">
             body {
                height:100%;
@@ -31,15 +31,17 @@
     </head>
     <body>
         <header>
+            {{if session.user:}}
             <span style="float:right" data-role="header" data-type="horizontal" data-position="inline">
-                {{=session.user.name}}({{=session.user.reputation}})
-                <a href="{{=path_to['default']}}/user">Logout</a><br/>
-                <a href="{{=path_to['default']}}/new_post">New Post</a>
+                <a href="{{=session.path_to['default']}}/user">{{=session.user.name}}({{=session.user.reputation}})</a>
+                <a href="{{=session.path_to['default']}}/auth">Logout</a><br/>
+                <a href="{{=session.path_to['default']}}/new_post">New Post</a>
             </span>
-            <h1 data-role="header"><a href="{{=path_to['default']}}">Vote up!</a></h1>
+            {{pass}}
+            <h1 data-role="header"><a href="{{=session.path_to['default']}}">Vote up!</a></h1>
         </header>
         <hr/>
         {{include}}
-        <script type="text/JavaScript" src="{{=path_to['static']}}/js/XHRSubmit.js"></script>
+        <script type="text/JavaScript" src="{{=session.path_to['static']}}/js/XHRSubmit.js"></script>
     </body>
 </html>

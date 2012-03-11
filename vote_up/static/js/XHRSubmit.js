@@ -5,7 +5,7 @@ function submit(url, callback, method, params, par) {
     ajax = window.XMLHttpRequest?(new XMLHttpRequest()):(new ActiveXObject("Microsoft.XMLHttp"));
     ajax.onreadystatechange=function() {
         if(ajax.readyState===4) {
-            //if(ajax.responseText!=="1" || ajax.status>=400) return submit(url, method, params);
+            //if(ajax.responseText!=="1" || ajax.status>=400) return submit(url, callback, method, params, par);
             if(callback)    callback(ajax.responseText, par);
         }
     };

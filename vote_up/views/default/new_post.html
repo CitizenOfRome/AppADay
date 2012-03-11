@@ -2,12 +2,13 @@
 <h3>Create A New Post:</h3>
 <div class="new_post">
     <h4>New Post:</h4>
-    <form action="{{=path_to['default']}}/new_post" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
+    <form action="{{=path_to['default']}}/new_post" method="POST">
         <h3><input type="text" name="title" /></h3>
         <p><textarea name="message"></textarea></p>
         <input type="text" id="tags" onkeyup="window.submit('{{=path_to['default']}}/suggest_tags?tag='+this.value, suggest_tags)" />
         <input type="hidden" id="tagSent" name="tags" />
         <p id="sug"></p>
+        <span id="sel"></span>
         <input type="submit" value="Create New Post" />
     </form>
 </div>
@@ -30,9 +31,31 @@
         res += "</tr></table>";
         document.getElementById("sug").innerHTML = res;
     }
+    function getOffset( el ) {
+        /*Source: http://stackoverflow.com/a/7373221/937891*/
+        var _x = 0;
+        var _y = 0;
+        while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+            _x += el.offsetLeft - el.scrollLeft;
+            _y += el.offsetTop - el.scrollTop;
+            // chrome/safari
+            if ($.browser.webkit) {
+                el = el.parentNode;
+            } else {
+                // firefox/IE
+                el = el.offsetParent;
+            }
+        }
+        return { top: _y, left: _x };
+    }
+    tags = document.getElementById("tags");
+    off = getOffset(tags);
     function add_tag(obj) {
-        alert(obj.children[0].innerHTML+"="+obj.children[2].innerHTML);
-        tags = document.getElementById("tags");
-        alert(tags.offsetTop);
+        //alert(obj.children[0].innerHTML+"="+obj.children[2].innerHTML);
+        sug = document.getElementById("sel");
+        sug.innerHTML+=obj.children[0].innerHTML
+        sug.style.position="absolute";
+        sug.style.top=tags.offsetTop+"px";
+        sug.style.left=tags.offsetLeft+"px";
     }
 </script>

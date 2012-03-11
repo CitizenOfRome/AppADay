@@ -3,11 +3,11 @@ import json
 session.path_to = {}
 session.path_to["static"] = "/"+request.application+"/static"
 session.path_to["default"] = "/"+request.application+"/default"
-session.delta = 5
+session.delta = 10
 #TODO:Tags, Edit, Profiles, Search
 def index():
     '''Display the list of posts'''
-    if not session.user: redirect(session.path_to['default']+"/user")
+    if not session.user: redirect(session.path_to['default']+"/auth")
     #print db(db.users).select()
     path_to=session.path_to
     posts=db(db.posts).select(orderby=(~db.posts.votes), limitby=(0, session.delta))
@@ -15,7 +15,7 @@ def index():
     
 def get_post():
     '''Display a post, its comments, its answers and allow for vote-up'''
-    if not session.user: redirect(session.path_to['default']+"/user")
+    if not session.user: redirect(session.path_to['default']+"/auth")
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
     answers=db(db.answers.post == post).select(orderby=(~db.answers.votes), limitby=(0, session.delta))
@@ -28,7 +28,7 @@ def get_post():
     
 def edit_post():
     '''Display a post, its comments, its answers and allow for vote-up'''
-    if not session.user: redirect(session.path_to['default']+"/user")
+    if not session.user: redirect(session.path_to['default']+"/auth")
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
     if post.user!=session.user.id:  return json.dumps({"message":"This aint yer post"})
@@ -143,19 +143,19 @@ def new_post():
     '''Accept a new post'''
     path_to=session.path_to
     if not request.vars.has_key("message"): return response.render('default/new_post.html', locals())
-    if not session.user: redirect(session.path_to['default']+"/user")
+    if not session.user: redirect(session.path_to['default']+"/auth")
     post_id = db.posts.insert(
         title = request.vars["title"],
         message = request.vars["message"],
         user = session.user.id
     )
-    #post = db.posts[post_id]
-    return "true"
+    print(db.posts[post_id])
+    redirect(session.path_to['default']+"/get_post/"+str(post_id))
 
 def new_response():
     '''Accept a new response'''
     if not request.vars.has_key("message"): return "false"
-    if not session.user: redirect(session.path_to['default']+"/user")
+    if not session.user: redirect(session.path_to['default']+"/auth")
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
     post_id = db.answers.insert(
@@ -169,7 +169,7 @@ def new_response():
 def new_comment():
     '''Accept a new comment for a post'''
     if not request.vars.has_key("message"): return json.dumps({"status":0,"message":"Bad Message"})
-    if not session.user: redirect(session.path_to['default']+"/user")
+    if not session.user: redirect(session.path_to['default']+"/auth")
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
     if post.user!=session.user.id and session.user.reputation<20:    return json.dumps({"status":0,"message":"You need atleast 20 rep to comment"})
@@ -183,7 +183,7 @@ def new_comment():
 def new_comment_r():
     '''Accept a new comment for an answer'''
     if not request.vars.has_key("message"): return json.dumps({"status":0,"message":"Bad Message"})
-    if not session.user: redirect(session.path_to['default']+"/user")
+    if not session.user: redirect(session.path_to['default']+"/auth")
     path_to=session.path_to
     answer=db(db.answers.id == request.args[0]).select().first()
     if answer.user!=session.user.id and session.user.reputation<20:    return json.dumps({"status":0,"message":"You need atleast 20 rep to comment"})
@@ -254,22 +254,36 @@ def vote():
         reputation = user.reputation+(inc+in2)*factor
     )
     return json.dumps({"votes":var.votes, "status":inc})
-    
+
 def user():
+    '''Display user-Profile'''
+    try:    user = db.users[int(request.args[0])]
+    except: redirect(session.path_to['default']+"/user/"+str(session.user.id))
+    if not user:    redirect(session.path_to['default']+"/user/"+str(session.user.id))
+    print user
+    return response.render('default/profile.html', locals())
+    
+import hashlib
+    
+def auth():
     '''Handle all things User-Auth related during dev'''
+    def get_hash(string):
+        salt = "Some mythical salt"
+        return hashlib.sha512(salt+string+salt).hexdigest()
     path_to=session.path_to
     if request.vars["name"]:
-        name = db(db.users.name == request.vars["name"].lower()).select()
-        password = db(db.users.password == request.vars["password"]).select()
-        if name:
-            if password:
-                session.user = name.first()
+        user = db(db.users.name == request.vars["name"].lower()).select()
+        if user:
+            user = user.first()
+            if user.password==get_hash(request.vars["password"]+str(user.id)):
+                session.user = user
                 redirect(session.path_to['default'])
         else:
-            id = db.users.insert( name = request.vars["name"].lower(), password = request.vars["password"] )
+            id = db.users.insert( name = request.vars["name"].lower())
             session.user = db.users[id]
+            session.user.update_record(password = get_hash(request.vars["password"]+str(id)))
             redirect(session.path_to['default'])
     if session.user:
         session.user = None
         redirect(session.path_to['default'])
-    return response.render('default/user.html', locals())
+    return response.render('default/auth.html', locals())

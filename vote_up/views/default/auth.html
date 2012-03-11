@@ -1,0 +1,7 @@
+{{extend "layout.html"}}
+<h2>Sign-in or Sign-up<h2>
+<form action="{{=path_to['default']}}/auth" method="POST">
+    E-mail:<input type="text" name="name" />
+    Password:<input type="password" name="password" />
+    <input type="submit" value="Join the fun" />
+</form>

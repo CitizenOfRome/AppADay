@@ -14,7 +14,7 @@
         </td>
     </tr>
 </table>
-<table id="{{=answer.id}}_comments" class="master">
+<table id="{{=answer.id}}_comments" class="slave">
     {{if comments_r[answer.id]:}}
     {{for comment in comments_r[answer.id]:}}
     <tr class="comment">
@@ -35,7 +35,9 @@
 <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, '{{=answer.id}}_comments', p)}); return false;">
     <input type="text" name="message" title="Comment on this answer" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
 </form>
+{{if len(comments_r[answer.id])>=session.delta:}}
 <a href="JavaScript:load_moar_comments_r({{=answer.id}})" id="m_{{=answer.id}}" class="moar">Load More</a>
+{{pass}}
 <hr/>
 {{pass}}
 {{pass}}

@@ -12,6 +12,10 @@
         border-width: 2px;
         border-color: grey;*/
     }
+    .slave {
+        text-align:left;
+        margin-left:15%;
+    }
     .vote {
         width:10px;
         text-align:center;
@@ -65,7 +69,7 @@
             </td>
         </tr>
     </table>
-    <table id="comments" class="master">
+    <table id="comments" class="slave">
         {{if comments!=None:}}
         {{for comment in comments:}}
         <tr class="comment">
@@ -86,11 +90,15 @@
     <form action="{{=path_to['default']}}/new_comment/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, 'comments', p)}); return false;">
         <input type="text" name="message" title="Comment on this post" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
     </form>
+    {{if len(comments)>=session.delta:}}
     <a href="JavaScript:load_moar_comments()" id="m_comments" class="moar">Load More</a>
+    {{pass}}
     <hr/>
     {{include "default/post_delta.html"}}
     <span id="master"></span>
+    {{if len(answers)>=session.delta:}}
     <a href="JavaScript:load_moar_answers()" id="m_master" class="moar">Load More Answers</a>
+    {{pass}}
     <div class="new_post">
         <form action="{{=path_to['default']}}/new_response/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s){window.location.reload()}); return false;">
             <p><textarea class="response" name="message" title="Answer this Question"></textarea></p>
@@ -138,10 +146,13 @@
     moar_c = 0;
     function load_moar_comments() {
         m = document.getElementById("comments");
+        plen = m.children.length;
         return submit("{{=path_to['default']}}/moar?comment={{=post.id}}&moar="+(moar_c+delta)+"&delta="+delta,
             function(s) {
                 if(s!=="") {
                     m.innerHTML+=s;
+                    nlen = m.children.length;
+                    if(nlen-plen<delta) document.getElementById("m_comments").innerHTML="";
                     moar_c+=delta;
                 } 
                 else {
@@ -153,11 +164,14 @@
     moar_c_r = {};
     function load_moar_comments_r(id) {
         m = document.getElementById(id+"_comments");
+        plen = m.children.length;
         moar = parseInt(moar_c_r[id+"_comments"])||0;
         return submit("{{=path_to['default']}}/moar?comment_r="+id+"&moar="+(moar+delta)+"&delta="+delta,
             function(s) {
                 if(s!=="") {
                     m.innerHTML+=s;
+                    nlen = m.children.length;
+                    if(nlen-plen<delta) document.getElementById("m_"+id).innerHTML="";
                     moar_c_r[id+"_comments"]=moar+delta;
                 }
                 else {
@@ -169,10 +183,13 @@
     moar_a = 0;
     function load_moar_answers() {
         m = document.getElementById("master");
+        plen = m.children.length;
         return submit("{{=path_to['default']}}/moar?answer={{=post.id}}&moar="+(moar_a+delta)+"&delta="+delta, 
             function(s) { 
                 if(s!=="") {
                     m.innerHTML+=s;
+                    nlen = m.children.length;
+                    if(nlen-plen<delta) document.getElementById("m_master").innerHTML="";
                     moar_a+=delta;
                 }
                 else {

@@ -15,16 +15,21 @@
 </a></div>
 {{pass}}
 <span id="moar"></span>
+{{if len(posts)>=session.delta:}}
 <a href="JavaScript:load_moar()" id="m_moar" class="moar">Load More</a>
+{{pass}}
 <script type="text/JavaScript">
     moar = 0;
     delta = parseInt({{=session.delta}});
     function load_moar() {
         m = document.getElementById("moar");
+        plen = m.children.length;
         return submit("{{=path_to['default']}}/moar?post=1&moar="+parseInt(moar+delta)+"&delta="+delta,
             function(s) {
                 if(s!=="") {
                     m.innerHTML+=s;
+                    nlen = m.children.length;
+                    if(nlen-plen<delta) document.getElementById("m_moar").innerHTML="";
                     moar+=delta;
                 }
                 else {
