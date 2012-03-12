@@ -4,6 +4,7 @@ session.path_to = {}
 session.path_to["static"] = "/"+request.application+"/static"
 session.path_to["default"] = "/"+request.application+"/default"
 session.delta = 10
+session.title_length = 100
 #TODO:Tags, Edit, Profiles, Search
 def index():
     '''Display the list of posts'''
@@ -36,49 +37,63 @@ def edit_post():
         post.update_record()
     else:   return response.render('default/edit_post.html', locals())
 
+import string
+session.taggable = string.letters+string.digits
 def suggest_tags():
     '''Return a list of tags matching a partially complete name'''
     tag = request.vars["tag"].strip().lower()
-    #db.tags.insert(name="banana", desc="A delicious tropical fruit that sustains a few economies.")
-    def validate(row):
+    if request.vars["ptags"]:   ptags = [int(x) for x in filter(bool, request.vars["ptags"].lower().split(","))]
+    else:   ptags = []
+    limit = 6
+    #db.tags.insert(name="carrot", desc="A vegetable with an edible, reddish-orange root.")
+    def validate_name(row):
         try:
-            return row.name.lower().index(tag)>-1
+            return (int(row.id) not in ptags) and row.name.lower().index(tag)>-1
         except ValueError:
-            try:
-                return row.desc.lower().index(tag)>-1
-            except ValueError:
-                return False
+            return False
         return False
-    try:    tags = db(db.tags).select().find(validate)
-    except ValueError:  tags=[]
+    def validate_desc(row):
+        try:
+            return (int(row.id) not in ptags) and (row not in tags) and row.desc.lower().index(tag)>-1
+        except ValueError:
+            return False
+        return False
+    sel = db(db.tags).select()
+    desc_lt = int(session.title_length*0.5)
+    if request.vars["new"]=="1":
+        #if session.user.reputation<100:    return json.dumps({"message":"You need atleast 100 rep to create a tag"})
+        tag = "".join(filter(bool, [x for x in tag if x in session.taggable]))
+        if tag=="":    return json.dumps({"message":"Why are you trying to create an empty tag?"})
+        tid = db.tags.insert(name=tag, desc="A new tag created by "+session.user.name)
+        tag = db.tags[tid]
+        print db.tags[12]
+        if len(tag.desc)>desc_lt:  ext = "..."
+        else:   ext = ""
+        return json.dumps({"tags":[tag.name, tag.desc[:desc_lt]+ext, tag.id]})
+    tags = list(sel.find(validate_name))
     if not tags:    tags=[]
+    if len(tags)<limit: tags+=(sel.find(validate_desc))
     ret = {}
     i = 1
     for tag in tags:
-        ret[tag.id]=[tag.name, tag.desc]
-        if i==6: break
+        if len(tag.desc)>desc_lt:  ext = "..."
+        else:   ext = ""
+        ret[i]=[tag.name, tag.desc[:desc_lt]+ext, tag.id]
+        if i==limit: break
         i += 1
     return json.dumps({"tags":ret})
     
 def moar():
     '''Load moar posts/answers/comments for XHRs'''
-    #if not session.user: return "You must be signed in to view this stuff"
+    if not session.user: return "You must be signed in to view this stuff"
     if request.vars["moar"]: moar = int(request.vars["moar"])
     else: moar = 0
     if request.vars["delta"]: session.delta = int(request.vars["delta"])
     path_to=session.path_to
     if request.vars["post"]:
-        vars = db(db.posts).select(orderby=(~db.posts.votes), limitby=(moar,moar+session.delta))
-        if not vars: vars=[]
-        ret = ""
-        for post in vars:
-            ret = ret+'''<div class="post"><a href="'''+path_to["default"]+'''/get_post/'''+str(post.id)+'''">
-                <span class="vote">'''+str(post.votes)+'''</span>
-                <span class="title">'''+post.title+'''</span>
-                <span class="name">-'''+db.users[post.user].name+'''</span>
-                <span class="rep">('''+str(db.users[post.user].reputation)+''')</span>
-                </a></div>'''
-        return ret
+        posts = db(db.posts).select(orderby=(~db.posts.votes), limitby=(moar,moar+session.delta))
+        if not posts: posts=[]
+        return response.render('default/main_delta.html', locals())
     elif request.vars["answer"]:
         post=db(db.posts.id == request.vars["answer"]).select().first()
         answers=db(db.answers.post == post).select(orderby=(~db.answers.votes), limitby=(moar,moar+session.delta))
@@ -91,51 +106,12 @@ def moar():
         post=db(db.posts.id == request.vars["comment"]).select().first()
         comments=db(db.comments.post == post).select(orderby=(~db.comments.votes), limitby=(moar,moar+session.delta))
         if not comments: comments=[]
-        ret = ""
-        for comment in comments:
-            if comment.v_up and session.user.id in comment.v_up:   up = '_h'
-            else: up = ''
-            if comment.v_dn and session.user.id in comment.v_dn:   dn = '_h'
-            else: dn = ''
-            ret = ret+'''
-                    <tr class="comment">
-                        <td class="vote" id="'''+str(post.id)+'''_'''+str(comment.id)+'''">
-                            <image class="vicon"src="'''+path_to['static']+'''/images/up'''+up+'''.png" onclick="submit(\''''+path_to['default']+'''/vote?up=1&comment='''+str(comment.id)+'''\', function(votes){vote(votes, \''''+str(post.id)+'''_'''+str(comment.id)+'''\')})" />
-                            <p>'''+str(comment.votes)+'''</p>
-                            <image class="vicon"src="'''+path_to['static']+'''/images/dn'''+dn+'''.png" onclick="submit(\''''+path_to['default']+'''/vote?up=0&comment='''+str(comment.id)+'''\', function(votes){vote(votes, \''''+str(post.id)+'''_'''+str(comment.id)+'''\')})" />
-                        </td>
-                        <td class="content">
-                            <span class="title">'''+comment.message+'''</span>
-                            -'''+db.users[comment.user].name+'''('''+str(db.users[comment.user].reputation)+''')
-                            <hr/>
-                        </td>
-                    </tr>
-            '''
-        return ret
+        return response.render('default/comments_delta.html', locals())
     elif request.vars["comment_r"]:
-        post=db(db.answers.id == request.vars["comment_r"]).select().first()
-        comments=db(db.comments_r.answer == post).select(orderby=(~db.comments_r.votes), limitby=(moar,moar+session.delta))
+        answer=db(db.answers.id == request.vars["comment_r"]).select().first()
+        comments=db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(moar,moar+session.delta))
         if not comments: comments=[]
-        ret = ""
-        for comment in comments:
-            if comment.v_up and session.user.id in comment.v_up:   up = '_h'
-            else: up = ''
-            if comment.v_dn and session.user.id in comment.v_dn:   dn = '_h'
-            else: dn = ''
-            ret = ret+'''
-                    <tr class="comment">
-                        <td class="vote" id="r'''+str(post.id)+'''_'''+str(comment.id)+'''">
-                            <image class="vicon"src="'''+path_to['static']+'''/images/up'''+up+'''.png" onclick="submit(\''''+path_to['default']+'''/vote?up=1&comment='''+str(comment.id)+'''\', function(votes){vote(votes, \'r'''+str(post.id)+'''_'''+str(comment.id)+'''\')})" />
-                            <p>'''+str(comment.votes)+'''</p>
-                            <image class="vicon"src="'''+path_to['static']+'''/images/dn'''+dn+'''.png" onclick="submit(\''''+path_to['default']+'''/vote?up=0&comment='''+str(comment.id)+'''\', function(votes){vote(votes, \'r'''+str(post.id)+'''_'''+str(comment.id)+'''\')})" />
-                        </td>
-                        <td class="content">
-                            <span class="title">'''+comment.message+'''</span>
-                            -'''+db.users[comment.user].name+'''('''+str(db.users[comment.user].reputation)+''')
-                            <hr/>
-                        </td>
-                    </tr>
-            '''
+        return response.render('default/comments_r_delta.html', locals())
         return ret
     else: return None
     
@@ -147,7 +123,8 @@ def new_post():
     post_id = db.posts.insert(
         title = request.vars["title"],
         message = request.vars["message"],
-        user = session.user.id
+        user = session.user.id,
+        tags = request.vars["tags"].lower().split(",")
     )
     print(db.posts[post_id])
     redirect(session.path_to['default']+"/get_post/"+str(post_id))
@@ -257,6 +234,7 @@ def vote():
 
 def user():
     '''Display user-Profile'''
+    if not session.user: redirect(session.path_to['default']+"/auth")
     try:    user = db.users[int(request.args[0])]
     except: redirect(session.path_to['default']+"/user/"+str(session.user.id))
     if not user:    redirect(session.path_to['default']+"/user/"+str(session.user.id))

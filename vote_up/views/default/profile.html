@@ -8,12 +8,12 @@
 <pre>
     Posts:
     {{for post in db(db.posts.user==user.id).select():}}
-        <a href="{{=session.path_to['default']}}/get_post/{{=post.id}}" >{{=post.title}} {{=post.votes}} </a>
+        <a href="{{=session.path_to['default']}}/get_post/{{=post.id}}" title="{{=post.message[:session.title_length]}}{{if len(post.message)>session.title_length:}}...{{pass}}" >{{=post.title}} {{=post.votes}} </a>
     {{pass}}
 </pre>
 <pre>
     Answers:
     {{for var in db(db.answers.user==user.id).select():}}
-        <a href="{{=session.path_to['default']}}/get_post/{{=var.post.id}}#r{{=var.id}}" >{{=var.post.title}} {{=var.votes}} </a>
+        <a href="{{=session.path_to['default']}}/get_post/{{=var.post.id}}#r{{=var.id}}" title="{{=var.message[:session.title_length]}}{{if len(var.message)>session.title_length:}}...{{pass}}" >{{=var.post.title}} {{=var.votes}} </a>
     {{pass}}
 </pre>

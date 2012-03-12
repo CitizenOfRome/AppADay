@@ -65,27 +65,17 @@
             </td>
             <td class="content">
                 <p>{{=post.message}}</p>
-                -{{=db.users[post.user].name}}({{=db.users[post.user].reputation}})
+                -{{=db.users[post.user].name}}({{=db.users[post.user].reputation}})<br/>
+                Tags:{{tags = post.tags}}
+                {{if not tags: tags=[]}}
+                {{for tag in tags:}}
+                    {{=db.tags[tag].name}}
+                {{pass}}
             </td>
         </tr>
     </table>
     <table id="comments" class="slave">
-        {{if comments!=None:}}
-        {{for comment in comments:}}
-        <tr class="comment">
-            <td class="vote" id="{{=post.id}}_{{=comment.id}}">
-                <image class="vicon" src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
-                <p>{{=comment.votes}}</p>
-                <image class="vicon" src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment={{=comment.id}}', function(votes){vote(votes, '{{=post.id}}_{{=comment.id}}')})" />
-            </td>
-            <td class="content">
-                <span class="title">{{=comment.message}}</span>
-                -{{=db.users[comment.user].name}}({{=db.users[comment.user].reputation}})
-                <hr/>
-            </td>
-        </tr>
-        {{pass}}
-        {{pass}}
+        {{include "default/comments_delta.html"}}
     </table>
     <form action="{{=path_to['default']}}/new_comment/{{=post.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, 'comments', p)}); return false;">
         <input type="text" name="message" title="Comment on this post" /><input type="submit" value="&#x23CE;" title="Add Comment"/>

@@ -1,0 +1,8 @@
+{{for post in posts:}}
+<div class="post"><a href="{{=path_to['default']}}/get_post/{{=post.id}}" title="{{=post.message[:session.title_length]}}{{if len(post.message)>session.title_length:}}...{{pass}}">
+    <span class="vote">{{=post.votes}}</span>
+    <span class="title">{{=post.title}}</span>
+    <span class="name">-{{=db.users[post.user].name}}</span>
+    <span class="rep">({{=db.users[post.user].reputation}})</span>
+</a></div>
+{{pass}}

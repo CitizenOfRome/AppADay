@@ -1,0 +1,16 @@
+{{if comments:}}
+{{for comment in comments:}}
+<tr class="comment">
+    <td class="vote" id="r{{=answer.id}}_{{=comment.id}}">
+        <image class="vicon" src="{{=path_to['static']}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
+        <p>{{=comment.votes}}</p>
+        <image class="vicon" src="{{=path_to['static']}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
+    </td>
+    <td class="content">
+        <span class="title">{{=comment.message}}</span>
+        -{{=db.users[comment.user].name}}({{=db.users[comment.user].reputation}})
+        <hr/>
+    </td>
+</tr>
+{{pass}}
+{{pass}}

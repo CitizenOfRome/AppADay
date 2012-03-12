@@ -1,61 +1,86 @@
 {{extend "layout.html"}}
+<style type="text/css">
+    .tag_box {
+        width:120px;
+    }
+</style>
 <h3>Create A New Post:</h3>
 <div class="new_post">
     <h4>New Post:</h4>
     <form action="{{=path_to['default']}}/new_post" method="POST">
         <h3><input type="text" name="title" /></h3>
         <p><textarea name="message"></textarea></p>
-        <input type="text" id="tags" onkeyup="window.submit('{{=path_to['default']}}/suggest_tags?tag='+this.value, suggest_tags)" />
-        <input type="hidden" id="tagSent" name="tags" />
-        <p id="sug"></p>
         <span id="sel"></span>
+        <input type="text" id="tags" autocomplete="false" /><input type="button" value="Create New Tag?" onclick="new_tag()" />
+        <input type="hidden" id="tagSent" name="tags" />
+        <img id="loading" src="{{=path_to['static']}}/images/loading.gif" style="visibility:hidden;height:15px;width:15px;" />
+        <p id="sug"></p>
         <input type="submit" value="Create New Post" />
     </form>
 </div>
 <script type="text/JavaScript">
+    tags=document.getElementById("tags");
+    tags.onchange = tags.onkeyup = tags.onkeydown = function() {
+        if(tags.value)  window.submit("{{=path_to['default']}}/suggest_tags?tag="+tags.value+"&ptags="+document.getElementById("tagSent").value, suggest_tags, "GET", "", "loading"); 
+        else    document.getElementById("sug").innerHTML = "";
+    };
+    function new_tag() {
+        submit("{{=path_to['default']}}/suggest_tags?new=1&tag="+tags.value, add_new_tag, "GET", "", "loading");
+    }
     function displayBox(message, obj) {
         alert(message);
     }
     function suggest_tags(response) {
-        response = JSON.parse(response);
+        var response = JSON.parse(response);
         if (response.hasOwnProperty("message") && response["message"]) {
             displayBox(response["message"], document.getElementById(id).children[1]);
         }
-        res = "<table class='tags'><tr>";
+        var res = "<table class='tags'><tr>";
         i = 1;
         for(ob in response["tags"]) {
             if(i==4)    res+="</tr><tr>";
-            res+='<td class="tag_box"><a href="#" onclick="add_tag(this)"><span class="tag" id="'+response["tags"][ob][0]+'">'+response["tags"][ob][0]+'</span><br/><span class="tag_desc" id="'+response["tags"][ob][0]+'_desc">'+response["tags"][ob][1]+'</span></a></td>';
+            res+='<td class="tag_box"><a href="#" onclick="add_tag_from_obj(this)"><span class="tag" id="'+response["tags"][ob][2]+'">'+response["tags"][ob][0]+'</span><br/><span class="tag_desc" id="'+response["tags"][ob][2]+'_desc">'+response["tags"][ob][1]+'</span></a></td>';
             i+=1;
         }
         res += "</tr></table>";
         document.getElementById("sug").innerHTML = res;
     }
-    function getOffset( el ) {
-        /*Source: http://stackoverflow.com/a/7373221/937891*/
-        var _x = 0;
-        var _y = 0;
-        while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
-            _x += el.offsetLeft - el.scrollLeft;
-            _y += el.offsetTop - el.scrollTop;
-            // chrome/safari
-            if ($.browser.webkit) {
-                el = el.parentNode;
-            } else {
-                // firefox/IE
-                el = el.offsetParent;
-            }
-        }
-        return { top: _y, left: _x };
+    //$("#sel")[0].style.position="absolute";
+    //$("#sel").offset($("#tags").offset());
+    function add_tag(id, tag, desc) {
+        if(document.getElementById('t'+id)) return;
+        var tagSent = document.getElementById("tagSent");
+        var prep = tagSent.value?",":"";
+        document.getElementById("sel").innerHTML+='<span class="tag" id="t'+id+'">'+tag+'<a href="JavaScript:remove_tag(\'t'+id+'\');">X</a></span> ';
+        tagSent.value+=prep+id;
+        document.getElementById("tags").value = "";
+        document.getElementById("sug").innerHTML = "";
     }
-    tags = document.getElementById("tags");
-    off = getOffset(tags);
-    function add_tag(obj) {
+    function remove_tag(id) {
+        var tag = document.getElementById(id);
+        tag.innerHTML = "";
+        tag.id = "";
+        tag.parentNode.removeChild(tag);
+        id = id.substring(1);
+        var tagSent = document.getElementById("tagSent");
+        var loc = tagSent.value.indexOf(id);
+        if(loc===0) tagSent.value = tagSent.value.substring(id.length+1);
+        else if(loc>0) tagSent.value = tagSent.value.substring(id.length-1);
+    }
+    function add_new_tag(response) {
+        var response = JSON.parse(response);
+        if (response.hasOwnProperty("message") && response["message"]) {
+            displayBox(response["message"]);
+        }
+        if(!response["tags"])   return;
+        var tag = response["tags"][0];
+        var id = response["tags"][2];
+        return add_tag(id, tag);
+    }
+    function add_tag_from_obj(obj) {
         //alert(obj.children[0].innerHTML+"="+obj.children[2].innerHTML);
-        sug = document.getElementById("sel");
-        sug.innerHTML+=obj.children[0].innerHTML
-        sug.style.position="absolute";
-        sug.style.top=tags.offsetTop+"px";
-        sug.style.left=tags.offsetLeft+"px";
+        var tag = obj.children[0].innerHTML;
+        var id = obj.children[0].id;
+        return add_tag(id, tag);
     }
 </script>

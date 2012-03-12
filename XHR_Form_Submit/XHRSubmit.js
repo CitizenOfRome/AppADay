@@ -1,12 +1,14 @@
-function submit(url, callback, method, params, par) {
+function submit(url, callback, method, params, img_id, callOnRepeat) {
     method = method||"GET";
     method = method.toUpperCase();
     params = params||null;
-    ajax = window.XMLHttpRequest?(new XMLHttpRequest()):(new ActiveXObject("Microsoft.XMLHttp"));
+    var ajax = window.XMLHttpRequest?(new XMLHttpRequest()):(new ActiveXObject("Microsoft.XMLHttp"));
     ajax.onreadystatechange=function() {
         if(ajax.readyState===4) {
-            //if(ajax.responseText!=="1" || ajax.status>=400) return submit(url, callback, method, params, par);
-            if(callback)    callback(ajax.responseText, par);
+            //if(ajax.responseText!=="1" || ajax.status>=400) return submit(url, callback, method, params);
+            if(window.mySubmits)    window.mySubmits.splice(thisIndex, 1);
+            if(document.getElementById(img_id)) document.getElementById(img_id).style.visibility = "hidden";
+            if(callback)    callback(ajax.responseText);
         }
     };
     if(method==="GET" && params!==null) {
@@ -14,7 +16,17 @@ function submit(url, callback, method, params, par) {
         else    url = url+"?"+params;
         params=null;
     }
+    //Prevent repetetion when waiting on the same request
+    var thisString = String([url, callback, method, params, img_id, callOnRepeat])+"";
+    if(!window.mySubmits)   window.mySubmits = [];
+    else {
+        var thisIndex = window.mySubmits.indexOf(thisString);
+        if(thisIndex>-1)    return callOnRepeat?callOnRepeat(thisString):false;
+        else    window.mySubmits.push(thisString);
+    }
+    if(document.getElementById(img_id)) document.getElementById(img_id).style.visibility = "visible";
     ajax.open(method, url, true);
+    if(!ajax)   window.mySubmits.splice(thisIndex, 1);
     if(method==="POST")   ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     ajax.send(params);
 }
@@ -42,7 +54,7 @@ function get_value(element, form) {
             return false;
     }
 }
-function post_form(form, callback, callbefore) {
+function post_form(form, callback, callbefore, img_id) {
     var params="", add="", names=[], par={};
     url = form.action;
     method = form.method;
@@ -58,5 +70,5 @@ function post_form(form, callback, callbefore) {
     }
     if(callbefore)  callbefore(par);
     else    form.reset();
-    return submit(url, callback, method, params, par);
+    return submit(url, callback, method, params, img_id);
 }
