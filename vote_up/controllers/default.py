@@ -1,11 +1,9 @@
-import json
-
 session.path_to = {}
 session.path_to["static"] = "/"+request.application+"/static"
 session.path_to["default"] = "/"+request.application+"/default"
-session.delta = 10
+session.delta = 20
 session.title_length = 100
-#TODO:Tags, Edit, Profiles, Search
+#TODO:Edit, Search, UI (Draw it first!), ID-ref-comments, Convert to FW
 def index():
     '''Display the list of posts'''
     if not session.user: redirect(session.path_to['default']+"/auth")
@@ -20,11 +18,11 @@ def get_post():
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
     answers=db(db.answers.post == post).select(orderby=(~db.answers.votes), limitby=(0, session.delta))
-    comments=db(db.comments.post == post).select(orderby=(~db.comments.votes), limitby=(0, session.delta))
+    comments=db(db.comments.post == post).select(orderby=(~db.comments.votes), limitby=(0, int(session.delta*0.5)))
     comments_r = {}
     if answers:
         for answer in answers:
-            comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(0, session.delta)))
+            comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(0, int(session.delta*0.5))))
     return response.render('default/post.html', locals())
     
 def edit_post():
@@ -34,11 +32,11 @@ def edit_post():
     post=db(db.posts.id == request.args[0]).select().first()
     if post.user!=session.user.id:  return json.dumps({"message":"This aint yer post"})
     if request.vars["title"]: 
+        '''Update the post with new edits'''
         post.update_record()
     else:   return response.render('default/edit_post.html', locals())
 
-import string
-session.taggable = string.letters+string.digits
+session.taggable = string.letters+string.digits+"_-"
 def suggest_tags():
     '''Return a list of tags matching a partially complete name'''
     tag = request.vars["tag"].strip().lower()
@@ -61,12 +59,15 @@ def suggest_tags():
     sel = db(db.tags).select()
     desc_lt = int(session.title_length*0.5)
     if request.vars["new"]=="1":
-        #if session.user.reputation<100:    return json.dumps({"message":"You need atleast 100 rep to create a tag"})
-        tag = "".join(filter(bool, [x for x in tag if x in session.taggable]))
+        if session.user.reputation<100:    return json.dumps({"message":"You need atleast 100 rep to create a tag"})
+        def sp(x):
+            if x in string.whitespace:  return "_"
+            if x in session.taggable:  return x
+            return False
+        tag = "".join(filter(bool, [sp(x) for x in tag]))
         if tag=="":    return json.dumps({"message":"Why are you trying to create an empty tag?"})
-        tid = db.tags.insert(name=tag, desc="A new tag created by "+session.user.name)
+        tid = db.tags.insert(name=tag)
         tag = db.tags[tid]
-        print db.tags[12]
         if len(tag.desc)>desc_lt:  ext = "..."
         else:   ext = ""
         return json.dumps({"tags":[tag.name, tag.desc[:desc_lt]+ext, tag.id]})
@@ -82,38 +83,91 @@ def suggest_tags():
         if i==limit: break
         i += 1
     return json.dumps({"tags":ret})
+def tag():
+    '''Display a post, its comments, its answers and allow for vote-up'''
+    if not session.user: redirect(session.path_to['default']+"/auth")
+    path_to=session.path_to
+    try:    req = request.args[0]
+    except IndexError:  redirect(session.path_to['default'])
+    try:    condi = (db.tags.id == int(req))
+    except ValueError:  condi = (db.tags.name == str(req))
+    tag=db(condi).select().first()
+    if not tag:  redirect(session.path_to['default'])
+    posts = db(db.posts.tags.contains(tag.id)).select(orderby=(~db.posts.votes), limitby=(0,session.delta))
+    if not posts: posts=[]
+    return response.render('default/tag.html', locals())
     
 def moar():
-    '''Load moar posts/answers/comments for XHRs'''
+    '''Load more posts/answers/comments for XHRs'''
     if not session.user: return "You must be signed in to view this stuff"
-    if request.vars["moar"]: moar = int(request.vars["moar"])
-    else: moar = 0
-    if request.vars["delta"]: session.delta = int(request.vars["delta"])
+    if request.vars["moar"]: more = int(request.vars["moar"])
+    else: more = 0
+    if request.vars["delta"]: delta = int(request.vars["delta"])
+    else: delta = session.delta
     path_to=session.path_to
-    if request.vars["post"]:
-        posts = db(db.posts).select(orderby=(~db.posts.votes), limitby=(moar,moar+session.delta))
+    if request.vars["tag"]:
+        req = request.args[0]
+        if not req: req = 1
+        try:    condi = (db.tags.id == int(req))
+        except ValueError:  condi = (db.tags.name == str(req))
+        tag=db(condi).select().first()
+        posts = db(db.posts.tags.contains(tag.id)).select(orderby=(~db.posts.votes), limitby=(more,more+delta))
+        if not posts: posts=[]
+        return response.render('default/main_delta.html', locals())
+    elif request.vars["post"]:
+        posts = db(db.posts).select(orderby=(~db.posts.votes), limitby=(more,more+delta))
         if not posts: posts=[]
         return response.render('default/main_delta.html', locals())
     elif request.vars["answer"]:
         post=db(db.posts.id == request.vars["answer"]).select().first()
-        answers=db(db.answers.post == post).select(orderby=(~db.answers.votes), limitby=(moar,moar+session.delta))
+        answers=db(db.answers.post == post).select(orderby=(~db.answers.votes), limitby=(more,more+delta))
         comments_r = {}
         if not answers: return ""
         for answer in answers:
-            comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(moar,moar+session.delta)))
+            comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(more,more+delta)))
         return response.render('default/post_delta.html', locals())
     elif request.vars["comment"]:
         post=db(db.posts.id == request.vars["comment"]).select().first()
-        comments=db(db.comments.post == post).select(orderby=(~db.comments.votes), limitby=(moar,moar+session.delta))
+        comments=db(db.comments.post == post).select(orderby=(~db.comments.votes), limitby=(more,more+int(delta*0.5)))
         if not comments: comments=[]
         return response.render('default/comments_delta.html', locals())
     elif request.vars["comment_r"]:
         answer=db(db.answers.id == request.vars["comment_r"]).select().first()
-        comments=db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(moar,moar+session.delta))
+        comments=db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(more,more+int(delta*0.5)))
         if not comments: comments=[]
         return response.render('default/comments_r_delta.html', locals())
-        return ret
     else: return None
+    
+def get_by_id():
+    '''Get user-content by id'''
+    if not session.user: return "You must be signed in to view this stuff"
+    if request.vars["moar"]: more = int(request.vars["moar"])
+    else: more = 0
+    if request.vars["delta"]: delta = int(request.vars["delta"])
+    else: delta = session.delta
+    path_to=session.path_to
+    if request.vars["post"]:
+        posts = [db.posts(request.vars["post"])]
+        if not posts: return ""
+        return response.render('default/main_delta.html', locals())
+    elif request.vars["answer"]:
+        answers=[db.answers(request.vars["answer"])]
+        comments_r = {}
+        if not answers: return ""
+        for answer in answers:
+            comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(more,more+delta)))
+        return response.render('default/post_delta.html', locals())
+    elif request.vars["comment"]:
+        comments=[db.comments(request.vars["comment"])]
+        if not comments: return ""
+        post = comments[0].post
+        return response.render('default/comments_delta.html', locals())
+    elif request.vars["comment_r"]:
+        comments=[db.comments_r(request.vars["comment_r"])]
+        if not comments: return ""
+        answer = comments[0].answer
+        return response.render('default/comments_r_delta.html', locals())
+    else: return ""
     
 def new_post():
     '''Accept a new post'''
@@ -122,11 +176,10 @@ def new_post():
     if not session.user: redirect(session.path_to['default']+"/auth")
     post_id = db.posts.insert(
         title = request.vars["title"],
-        message = request.vars["message"],
+        message = (request.vars["message"]),
         user = session.user.id,
         tags = request.vars["tags"].lower().split(",")
     )
-    print(db.posts[post_id])
     redirect(session.path_to['default']+"/get_post/"+str(post_id))
 
 def new_response():
@@ -136,12 +189,12 @@ def new_response():
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
     post_id = db.answers.insert(
-        message = request.vars["message"],
+        message = (request.vars["message"]),
         post = post,
         user = session.user.id
     )
     #post = db.posts[post_id]
-    return "true"
+    return post_id
 
 def new_comment():
     '''Accept a new comment for a post'''
@@ -238,10 +291,7 @@ def user():
     try:    user = db.users[int(request.args[0])]
     except: redirect(session.path_to['default']+"/user/"+str(session.user.id))
     if not user:    redirect(session.path_to['default']+"/user/"+str(session.user.id))
-    print user
     return response.render('default/profile.html', locals())
-    
-import hashlib
     
 def auth():
     '''Handle all things User-Auth related during dev'''
@@ -257,9 +307,10 @@ def auth():
                 session.user = user
                 redirect(session.path_to['default'])
         else:
+            return response.render('default/error.html', locals())
             id = db.users.insert( name = request.vars["name"].lower())
             session.user = db.users[id]
-            session.user.update_record(password = get_hash(request.vars["password"]+str(id)))
+            session.user.update_record(password = get_hash(request.vars["password"]+str(id)), reputation=0)
             redirect(session.path_to['default'])
     if session.user:
         session.user = None

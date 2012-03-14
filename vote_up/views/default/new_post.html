@@ -1,7 +1,17 @@
 {{extend "layout.html"}}
 <style type="text/css">
     .tag_box {
-        width:120px;
+        padding:5px;
+    }
+    textarea, input, .tags {
+        font-family:Perpetua, Georgia, Consolas;
+        color: #050542;
+        width:800px;
+        font-size:120%;
+    }
+    textarea {
+        width:800px;
+        height:600px;
     }
 </style>
 <h3>Create A New Post:</h3>
@@ -10,8 +20,8 @@
     <form action="{{=path_to['default']}}/new_post" method="POST">
         <h3><input type="text" name="title" /></h3>
         <p><textarea name="message"></textarea></p>
-        <span id="sel"></span>
-        <input type="text" id="tags" autocomplete="false" /><input type="button" value="Create New Tag?" onclick="new_tag()" />
+        <span id="sel"></span><br/>
+        <input type="text" id="tags" /><input type="button" value="*" title="Click to create a new tag" onclick="new_tag()" style="width:auto" />
         <input type="hidden" id="tagSent" name="tags" />
         <img id="loading" src="{{=path_to['static']}}/images/loading.gif" style="visibility:hidden;height:15px;width:15px;" />
         <p id="sug"></p>

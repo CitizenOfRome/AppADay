@@ -1,0 +1,21 @@
+body {
+/*http://ie.microsoft.com/testdrive/graphics/cssgradientbackgroundmaker/default.html*/
+
+/* IE10 */ 
+background-image: -ms-linear-gradient(right, #F7F7F7 0%, #FFFFFF 100%);
+
+/* Mozilla Firefox */ 
+background-image: -moz-linear-gradient(right, #F7F7F7 0%, #FFFFFF 100%);
+
+/* Opera */ 
+background-image: -o-linear-gradient(right, #F7F7F7 0%, #FFFFFF 100%);
+
+/* Webkit (Safari/Chrome 10) */ 
+background-image: -webkit-gradient(linear, right top, left top, color-stop(0, #F7F7F7), color-stop(1, #FFFFFF));
+
+/* Webkit (Chrome 11+) */ 
+background-image: -webkit-linear-gradient(right, #F7F7F7 0%, #FFFFFF 100%);
+
+/* Proposed W3C Markup */ 
+background-image: linear-gradient(right, #F7F7F7 0%, #FFFFFF 100%);
+}

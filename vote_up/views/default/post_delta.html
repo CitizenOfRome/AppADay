@@ -3,13 +3,13 @@
 <table class="master">
     <tr class="answer">
         <td class="vote" id="r{{=answer.id}}">
-            <image class="vicon" src="{{=path_to['static']}}/images/up{{if answer.v_up and session.user.id in answer.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
-            <p>{{=answer.votes}}</p>
-            <image class="vicon" src="{{=path_to['static']}}/images/dn{{if answer.v_dn and session.user.id in answer.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
+            <image class="vicon" id="r{{=answer.id}}v_up" src="{{=path_to['static']}}/images/up{{if answer.v_up and session.user.id in answer.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
+            <p id="r{{=answer.id}}v">{{=answer.votes}}</p>
+            <image class="vicon" id="r{{=answer.id}}v_dn" src="{{=path_to['static']}}/images/dn{{if answer.v_dn and session.user.id in answer.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
         </td>
         <td class="content">
-            <p>{{=answer.message}}</p>
-            -{{=db.users[answer.user].name}}({{=db.users[answer.user].reputation}})
+            <p>{{=XML(MARKMIN(answer.message), sanitize=True)}}</p>
+               {{=timedelta(answer.time)}} ago, <a href="{{=path_to['default']}}/user/{{=answer.user}}">{{=db.users(answer.user).name}}({{=db.users(answer.user).reputation}})</a>
             </span>
         </td>
     </tr>

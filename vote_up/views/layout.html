@@ -5,7 +5,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="Content-Language" content="EN" />
         <meta name="keywords" content="vote up" />
+        <link rel="shortcut icon" href="{{=session.path_to['static']}}/images/like-button.png" />
         <link rel="stylesheet" type="text/css" href="{{=session.path_to['static']}}/css/reset.css" />
+        <link rel="stylesheet" type="text/css" href="{{=session.path_to['static']}}/css/gradient.css" />
         <style type="text/css">
             body {
                height:100%;
@@ -16,21 +18,31 @@
                position: absolute;
                top:0%;
                left:3%;
-               color: Navy;
+               color: #050542;
                font-size:108%;
+            }
+            a {
+                color:inherit;
+                text-decoration:inherit;
+            }
+            a:hover {
+                text-decoration:underline;
             }
             hr{
                 display: block; height: 1px;
                 border: 0; border-top: 1px solid darkgrey;
                 margin: 1em 0; padding: 0;
+                visibility:hidden;
             }
         </style>
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1"> 
         <script type="text/JavaScript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script type="text/JavaScript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css" />
+        <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css" />-->
+        <script type="text/JavaScript" src="{{=session.path_to['static']}}/js/XHRSubmit.js"></script>
     </head>
-    <body>
-        <header>
+    <body class=".ui-widget">
+        <header class=".ui-widget-header">
             {{if session.user:}}
             <span style="float:right" data-role="header" data-type="horizontal" data-position="inline">
                 <a href="{{=session.path_to['default']}}/user">{{=session.user.name}}({{=session.user.reputation}})</a>
@@ -40,8 +52,8 @@
             {{pass}}
             <h1 data-role="header"><a href="{{=session.path_to['default']}}">Vote up!</a></h1>
         </header>
-        <hr/>
+        <span class=".ui-widget-content">
         {{include}}
-        <script type="text/JavaScript" src="{{=session.path_to['static']}}/js/XHRSubmit.js"></script>
+        </span>
     </body>
 </html>
