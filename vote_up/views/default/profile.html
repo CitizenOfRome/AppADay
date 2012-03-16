@@ -1,6 +1,6 @@
 {{extend "layout.html"}}
-<title>{{=user.name}} on Vote up!</title>
-<script type="text/JavaScript">document.title="{{=user.name}} on Vote up!";</script>
+<title>{{=user.name}} on {{=session.app_name}}</title>
+<script type="text/JavaScript">document.title="{{=user.name}} on {{=session.app_name}}";</script>
 <pre>
     Name:{{=user.name}}
     ID:{{=user.id}}

@@ -1,6 +1,6 @@
 {{extend "layout.html"}}
-<title>{{=tag.name}} on Vote up!</title>
-<script type="text/JavaScript">document.title="{{=tag.name}} on Vote up!";</script>
+<title>{{=tag.name}} on {{=session.app_name}}</title>
+<script type="text/JavaScript">document.title="{{=tag.name}} on {{=session.app_name}}";</script>
 <h2>{{=tag.name}}</h2>
 <p>{{=tag.desc}}</p>
 {{if db.users(tag.user):}}<a href="{{=session.path_to['default']}}/user/{{=tag.user}}">{{=db.users(tag.user).name}}</a>{{pass}}

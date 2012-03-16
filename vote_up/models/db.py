@@ -114,6 +114,7 @@ def timedelta(frm, to=datetime.utcnow()):
     return str(det)+" second"+s
 import string
 import hashlib
+session.app_name = "Vote Up!"
 if session.user:    user_id=session.user.id
 else: user_id=None
 db.define_table('tags', db.Field('name', 'string'), db.Field('desc', 'text', default=""), db.Field('user', 'reference users', default=user_id), db.Field('time', 'datetime', default=datetime.utcnow()))

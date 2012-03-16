@@ -68,8 +68,8 @@ function post_form(form, callback, callbefore, img_id) {
         par[form[i].name] = value;
         add = "&";
     }
-    if(callbefore)  callbefore(par);
-    else    form.reset();
-    callback_n = function (s) { return callback(s, par); };
+    if(callbefore)  callbefore(par, form);
+    /*else    form.reset();*/
+    callback_n = function (s) { return callback(s, par, form); };
     return submit(url, callback_n, method, params, img_id);
 }

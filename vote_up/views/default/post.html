@@ -56,8 +56,8 @@
         border-color: #050542;
     }
 </style>
-<title>{{=post.title}} on Vote up!</title>
-<script type="text/JavaScript">document.title="{{=post.title}} on Vote up!";</script>
+<title>{{=post.title}} on {{=session.app_name}}</title>
+<script type="text/JavaScript">document.title="{{=post.title}} on {{=session.app_name}}";</script>
 <div class="body">
     <h2><a href="#{{=post.id}}">{{=post.title}}</a></h2><hr/>
     <table class="master" width="100%">
@@ -107,7 +107,6 @@
 </div>
 <img id="loading" src="{{=path_to['static']}}/images/loading.gif" style="visibility:hidden;height:15px;width:15px;position:fixed;top:50%;left:50%;" />
 <script type="text/JavaScript">
-    //Answer_editor: Click edit to change answer-para into edit-box; cancel to return
     user = "{{=session.user.name}}";
     rep = {{=session.user.reputation}};
     get_response_from_hash=function (hash) {

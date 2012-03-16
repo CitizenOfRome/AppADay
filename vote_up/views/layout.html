@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="en">
     <head>
-        <title>Vote-Up</title>
+        <title>{{=session.app_name}}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="Content-Language" content="EN" />
         <meta name="keywords" content="vote up" />
@@ -55,7 +55,7 @@
                 <td><a href="{{=session.path_to['default']}}/auth">Logout</a><br/></td>
             </tr></table>
             {{pass}}
-            <h1 data-role="header"><a href="{{=session.path_to['default']}}">Vote up!</a></h1>
+            <h1 data-role="header"><a href="{{=session.path_to['default']}}">{{=session.app_name}}</a></h1>
         </header>
         <span class=".ui-widget-content">
         {{include}}
