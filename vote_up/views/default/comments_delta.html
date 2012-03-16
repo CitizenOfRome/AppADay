@@ -12,7 +12,7 @@
     </td>
     <td class="content">
         <span class="title">{{=comment.message}}</span>
-        -{{=db.users[comment.user].name}}({{=db.users[comment.user].reputation}})
+        <a href="{{=path_to['default']}}/user/{{=comment.user}}">-{{=db.users[comment.user].name}}({{=db.users[comment.user].reputation}})</a>
     </td>
 </tr>
 {{pass}}

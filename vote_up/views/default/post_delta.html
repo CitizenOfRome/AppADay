@@ -8,15 +8,18 @@
             <image class="vicon" id="r{{=answer.id}}v_dn" src="{{=path_to['static']}}/images/dn{{if answer.v_dn and session.user.id in answer.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
         </td>
         <td class="content">
-            <p>{{=XML(MARKMIN(answer.message), sanitize=True)}}</p>
+            <span id="content_r{{=answer.id}}">{{=XML(MARKMIN(answer.message), sanitize=True)}}</span>
                {{=timedelta(answer.time)}} ago, <a href="{{=path_to['default']}}/user/{{=answer.user}}">{{=db.users(answer.user).name}}({{=db.users(answer.user).reputation}})</a>
             </span>
+            {{if answer.user==session.user.id:}}<a href="JavaScript:edit_answer('content_r{{=answer.id}}')">Edit</a>{{pass}}
         </td>
     </tr>
 </table>
 <table id="{{=answer.id}}_comments" class="slave">
+    {{if comments_r.has_key(answer.id):}}
     {{comments = comments_r[answer.id]}}
     {{include "default/comments_r_delta.html"}}
+    {{pass}}
 </table>
 <form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, '{{=answer.id}}_comments', p)}); return false;">
     <input type="text" name="message" title="Comment on this answer" /><input type="submit" value="&#x23CE;" title="Add Comment"/>

@@ -14,18 +14,17 @@
         height:600px;
     }
 </style>
-<h3>Create A New Post:</h3>
 <div class="new_post">
-    <h4>New Post:</h4>
-    <form action="{{=path_to['default']}}/new_post" method="POST">
-        <h3><input type="text" name="title" /></h3>
-        <p><textarea name="message"></textarea></p>
+    <h4>{{if post:}}Editing <a href="{{=path_to['default']}}/get_post/{{=post.id}}/{{=''.join([x if x in string.letters+string.digits else '_' for x in post.title])}}">This</a> Post:{{else:}}Create A New Post:{{pass}}</h4>
+    <form action="{{=path_to['default']}}/{{if post:}}edit_post/{{=post.id}}{{else:}}new_post{{pass}}" method="POST">
+        <h3><input type="text" name="title" value="{{if post:}}{{=post.title}}{{pass}}" /></h3>
+        <p><textarea name="message">{{if post:}}{{=post.message}}{{pass}}</textarea></p>
         <span id="sel"></span><br/>
         <input type="text" id="tags" /><input type="button" value="*" title="Click to create a new tag" onclick="new_tag()" style="width:auto" />
         <input type="hidden" id="tagSent" name="tags" />
         <img id="loading" src="{{=path_to['static']}}/images/loading.gif" style="visibility:hidden;height:15px;width:15px;" />
         <p id="sug"></p>
-        <input type="submit" value="Create New Post" />
+        <input type="submit" value="{{if post:}}Commit Changes{{else:}}Create New Post{{pass}}" />
     </form>
 </div>
 <script type="text/JavaScript">
@@ -93,4 +92,9 @@
         var id = obj.children[0].id;
         return add_tag(id, tag);
     }
+    {{if post:}}
+        {{for tag in post.tags:}}
+        add_tag('{{=tag}}', '{{=db.tags(tag).name}}', '{{=db.tags(tag).desc}}');
+        {{pass}}
+    {{pass}}
 </script>

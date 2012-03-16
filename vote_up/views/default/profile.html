@@ -5,7 +5,7 @@
     Name:{{=user.name}}
     ID:{{=user.id}}
     Reputation:{{=user.reputation}}
-    Member-since:{{=user.joined}}
+    Member-since:{{=timedelta(user.joined)}}
 </pre>
 <pre>
     Posts:

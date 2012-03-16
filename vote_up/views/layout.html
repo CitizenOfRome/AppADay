@@ -18,21 +18,26 @@
                position: absolute;
                top:0%;
                left:3%;
-               color: #050542;
+               color: #020232;
                font-size:108%;
             }
             a {
                 color:inherit;
+               color: #050542;
                 text-decoration:inherit;
             }
             a:hover {
                 text-decoration:underline;
+                color: #4545132;
             }
             hr{
                 display: block; height: 1px;
                 border: 0; border-top: 1px solid darkgrey;
                 margin: 1em 0; padding: 0;
                 visibility:hidden;
+            }
+            tr, td, th {
+                padding:5px;
             }
         </style>
         <!--<meta name="viewport" content="width=device-width, initial-scale=1"> 
@@ -44,11 +49,11 @@
     <body class=".ui-widget">
         <header class=".ui-widget-header">
             {{if session.user:}}
-            <span style="float:right" data-role="header" data-type="horizontal" data-position="inline">
-                <a href="{{=session.path_to['default']}}/user">{{=session.user.name}}({{=session.user.reputation}})</a>
-                <a href="{{=session.path_to['default']}}/auth">Logout</a><br/>
-                <a href="{{=session.path_to['default']}}/new_post">New Post</a>
-            </span>
+            <table style="float:right;font-size:135%;padding:5px;"><tr>
+                <td><a href="{{=session.path_to['default']}}/new_post">New Post</a></td>
+                <td><a href="{{=session.path_to['default']}}/user">{{=session.user.name}}({{=session.user.reputation}})</a></td>
+                <td><a href="{{=session.path_to['default']}}/auth">Logout</a><br/></td>
+            </tr></table>
             {{pass}}
             <h1 data-role="header"><a href="{{=session.path_to['default']}}">Vote up!</a></h1>
         </header>

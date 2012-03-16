@@ -63,20 +63,23 @@
     <table class="master" width="100%">
         <tr class="post">
             <td class="vote" id="{{=post.id}}">
-                <image class="vicon" id="{{=post.id}}v_up" src="{{=path_to['static']}}/images/up{{if post.v_up and session.user.id in post.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
+                <image class="vicon" id="{{=post.id}}v_up" src="{{=path_to['static']}}/images/up{{if post.v_up and session.user.id in post.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')}, 'GET', '', 'loading')" />
                 <p id="{{=post.id}}v">{{=post.votes}}</p>
-                <image class="vicon" id="{{=post.id}}v_dn" src="{{=path_to['static']}}/images/dn{{if post.v_dn and session.user.id in post.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')})" />
+                <image class="vicon" id="{{=post.id}}v_dn" src="{{=path_to['static']}}/images/dn{{if post.v_dn and session.user.id in post.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')}, 'GET', '', 'loading')" />
             </td>
             <td class="content">
                 <p>{{=XML(MARKMIN(post.message), sanitize=True)}}</p>
-                <table width="100%"><tr width="100%">
+                <table width="100%">
+                {{if post.user==session.user.id:}}<tr><td><a href="{{=path_to['default']}}/edit_post/{{=post.id}}">Edit</a></td></tr>{{pass}}
+                <tr width="100%">
                 <td width="50%">{{tags = post.tags}}
                 {{if not tags:}}{{tags=[]}}<a href="{{=path_to['default']}}/tag/misc">UnCategorized</a>{{pass}}
                 {{for tag in tags:}}
                     <a href="{{=path_to['default']}}/tag/{{=str(tag)}}">{{=db.tags(tag).name}}</a>
                 {{pass}}</td>
-                <td class="name">{{=timedelta(post.time)}} ago, <a href="{{=path_to['default']}}/user/{{=post.user}}">{{=db.users(post.user).name}}({{=db.users[post.user].reputation}})</a></td>
-                </tr></table>
+                <td class="name">{{=timedelta(post.time)}} ago, <a href="{{=path_to['default']}}/user/{{=post.user}}">{{=db.users(post.user).name}}({{=db.users(post.user).reputation}})</a></td>
+                </tr>
+                </table>
             </td>
         </tr>
     </table><br/>
@@ -102,7 +105,9 @@
         </form>
     </div>
 </div>
+<img id="loading" src="{{=path_to['static']}}/images/loading.gif" style="visibility:hidden;height:15px;width:15px;position:fixed;top:50%;left:50%;" />
 <script type="text/JavaScript">
+    //Answer_editor: Click edit to change answer-para into edit-box; cancel to return
     user = "{{=session.user.name}}";
     rep = {{=session.user.reputation}};
     get_response_from_hash=function (hash) {
@@ -110,10 +115,10 @@
         hash = hash.substring(1);
         if(hash && !document.getElementById(hash)) {
             if(hash[0]==="r" && hash.indexOf("_")<0) { //If it is an answer
-                submit("{{=path_to['default']}}/get_by_id?answer="+hash.substring(1), function(s) { document.getElementById("master").innerHTML+=s; document.getElementById(hash).scrollIntoView(true); });
+                submit("{{=path_to['default']}}/get_by_id?answer="+hash.substring(1), function(s) { document.getElementById("master").innerHTML+=s; document.getElementById(hash).scrollIntoView(true); }, "GET", "", "loading");
             }
             else if(hash[0]==="r" && hash.indexOf("_")>=0) { //If it is a comment on an answer
-                submit("{{=path_to['default']}}/get_by_id?comment_r="+hash.substring(hash.indexOf("_")+1), function(s) {});
+                submit("{{=path_to['default']}}/get_by_id?comment_r="+hash.substring(hash.indexOf("_")+1), function(s) {}, "GET", "", "loading");
             }
         }
     };
@@ -149,7 +154,7 @@
             displayBox(response["message"], table);
         }
         if(!response["status"]) return;
-        window.submit("{{=path_to['default']}}/get_by_id?comment"+(id==="comments"?"":"_r")+"="+response["id"], function(s) { table.innerHTML+=s; });
+        window.submit("{{=path_to['default']}}/get_by_id?comment"+(id==="comments"?"":"_r")+"="+response["id"], function(s) { table.innerHTML+=s; }, "GET", "", "loading");
     }
     delta = parseInt({{=session.delta}});
     moar_c = 0;
@@ -169,7 +174,7 @@
                     mo.innerHTML="";
                     mo.parentNode.removeChild(mo);
                 }
-            }
+            }, "GET", "", "loading"
         );
     }
     moar_c_r = {};
@@ -190,7 +195,7 @@
                     mo.innerHTML="";
                     mo.parentNode.removeChild(mo);
                 }
-            }
+            }, "GET", "", "loading"
         );
     }
     moar_a = 0;
@@ -210,7 +215,24 @@
                     mo.innerHTML="";
                     mo.parentNode.removeChild(mo);
                 }
-            }
+            }, "GET", "", "loading"
+        );
+    }
+    function return_text(id, hf) {
+        ans = document.getElementById(id);
+        if(hf)  ans.innerHTML = window.original[id];
+        else    submit("{{=path_to['default']}}/get_markmin?markmin="+encodeURIComponent(document.getElementById(id+"_text").value), function(ret) { ans.innerHTML = ret }, "GET", "", "loading");
+        window.original[id] = null;
+    }
+    window.original = {};
+    function edit_answer(id) {//id=content_r#
+        ans = document.getElementById(id);
+        aid = id.substring(9);
+        submit("{{=path_to['default']}}/get_raw_by_id?answer="+aid,
+            function(ret) {
+                window.original[id] = ans.innerHTML;
+                ans.innerHTML = '<form id="'+id+'_form" action="{{=path_to['default']}}/new_response/{{=post.id}}?edit='+aid+'" method="POST" onsubmit="JavaScript:post_form(this, function(s){return_text(\''+id+'\')}, function(p){});return false;"><p><textarea id="'+id+'_text" class="response" name="message" title="Edit this answer">'+JSON.parse(ret)["message"]+'</textarea></p><input type="submit" value="Commit Changes" /><input type="button" value="Cancel" onclick="return_text(\''+id+'\', true)" /></form>';
+            }, "GET", "", "loading"
         );
     }
 </script>

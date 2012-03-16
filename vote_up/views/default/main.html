@@ -1,7 +1,7 @@
 {{extend "layout.html"}}
 <link rel="stylesheet" type="text/css" href="{{=session.path_to['static']}}/css/post_table.css" />
 <h3>Top Posts:</h3>
-<table id="moar">
+<table id="moar" class="table">
 {{include "default/main_delta.html"}}
 </table>
 {{if len(posts)>=session.delta:}}

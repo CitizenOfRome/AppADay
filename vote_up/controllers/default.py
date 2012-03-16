@@ -22,19 +22,9 @@ def get_post():
     comments_r = {}
     if answers:
         for answer in answers:
-            comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(0, int(session.delta*0.5))))
+            try: comments_r[answer.id]=(db(db.comments_r.answer == answer).select(orderby=(~db.comments_r.votes), limitby=(0, int(session.delta*0.5))))
+            except: pass
     return response.render('default/post.html', locals())
-    
-def edit_post():
-    '''Display a post, its comments, its answers and allow for vote-up'''
-    if not session.user: redirect(session.path_to['default']+"/auth")
-    path_to=session.path_to
-    post=db(db.posts.id == request.args[0]).select().first()
-    if post.user!=session.user.id:  return json.dumps({"message":"This aint yer post"})
-    if request.vars["title"]: 
-        '''Update the post with new edits'''
-        post.update_record()
-    else:   return response.render('default/edit_post.html', locals())
 
 session.taggable = string.letters+string.digits+"_-"
 def suggest_tags():
@@ -168,12 +158,72 @@ def get_by_id():
         answer = comments[0].answer
         return response.render('default/comments_r_delta.html', locals())
     else: return ""
+
+def get_raw_by_id():
+    '''Get raw user-content by id'''
+    if not session.user: return "You must be signed in to view this stuff"
+    if request.vars["moar"]: more = int(request.vars["moar"])
+    else: more = 0
+    if request.vars["delta"]: delta = int(request.vars["delta"])
+    else: delta = session.delta
+    path_to=session.path_to
+    if request.vars["post"]:
+        var = db.posts(request.vars["post"])
+        if var.user!=session.user.id:  return json.dumps({"message":"This aint yers"})
+        if not var: return ""
+        return json.dumps({"title":var.title, "message":var.message, "tags":var.tags})
+    elif request.vars["answer"]:
+        var=db.answers(request.vars["answer"])
+        if not var: return ""
+        if var.user!=session.user.id:  return json.dumps({"message":"This aint yers"})
+        return json.dumps({"message":var.message})
+    elif request.vars["comment"]:
+        var=db.comments(request.vars["comment"])
+        if not var: return ""
+        if var.user!=session.user.id:  return json.dumps({"message":"This aint yers"})
+        return json.dumps({"message":var.message});
+    elif request.vars["comment_r"]:
+        var=db.comments_r(request.vars["comment_r"])
+        if not var: return ""
+        if var.user!=session.user.id:  return json.dumps({"message":"This aint yers"})
+        return json.dumps({"message":var.message})
+    else: return ""
     
+def get_markmin():
+    '''Get HTML output given the MARKMIN'''
+    if not session.user: return "You must be signed in to view this stuff"
+    return MARKMIN(urllib.unquote(request.vars["markmin"]))
+    
+def edit_post():
+    '''Display a post, its comments, its answers and allow for vote-up'''
+    if not session.user: redirect(session.path_to['default']+"/auth")
+    path_to=session.path_to
+    post=db(db.posts.id == request.args[0]).select().first()
+    if not post: redirect(session.path_to['default'])
+    if post.user!=session.user.id:  return json.dumps({"message":"This aint yer post"})
+    if request.vars["title"] and request.vars["title"]!="" and request.vars["message"]!="": 
+        '''Update the post with new edits'''
+        if request.vars["tags"]=="":    request.vars["tags"]=db(db.tags.name=="misc").select().first().id
+        if not request.vars["tags"]:    request.vars["tags"]=db.tags.insert(name="misc", desc="A meta tag for everything uncategorized")
+        post.update_record(
+            title = request.vars["title"],
+            message = request.vars["message"],
+            tags = request.vars["tags"].lower().split(",")
+        )
+        redirect(session.path_to['default']+"/get_post/"+str(post.id))
+    else:   return response.render('default/new_post.html', locals())
+
 def new_post():
     '''Accept a new post'''
     path_to=session.path_to
+    post = None #for edit_post compatiability
     if not request.vars.has_key("message"): return response.render('default/new_post.html', locals())
     if not session.user: redirect(session.path_to['default']+"/auth")
+    if not (request.vars["title"] and request.vars["title"]!="" and request.vars["message"]!=""): redirect(session.path_to['default']+"/new_post")
+    if request.vars["tags"]=="":
+        request.vars["tags"]=db(db.tags.name=="misc").select().first()
+        if not request.vars["tags"]:    request.vars["tags"]=str(db.tags.insert(name="misc", desc="A meta tag for everything uncategorized"))
+        else:   request.vars["tags"]=str(request.vars["tags"].id)
     post_id = db.posts.insert(
         title = request.vars["title"],
         message = (request.vars["message"]),
@@ -188,13 +238,20 @@ def new_response():
     if not session.user: redirect(session.path_to['default']+"/auth")
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
-    post_id = db.answers.insert(
-        message = (request.vars["message"]),
-        post = post,
-        user = session.user.id
-    )
-    #post = db.posts[post_id]
-    return post_id
+    if request.vars["message"]=="": redirect(session.path_to['default'])
+    if request.vars["edit"]:
+        answer = db(db.answers.id == request.vars["edit"]).select().first()
+        if not answer: redirect(session.path_to['default']+"/get_post/"+str(post.id))
+        if answer.user!=session.user.id:  return json.dumps({"message":"This aint yers"})
+        answer.update_record( message = (request.vars["message"]) )
+        return str(answer.id)
+    else:
+        return str(db.answers.insert(
+            message = (request.vars["message"]),
+            post = post,
+            user = session.user.id
+        ))
+        #post = db.posts[post_id]
 
 def new_comment():
     '''Accept a new comment for a post'''
@@ -203,6 +260,7 @@ def new_comment():
     path_to=session.path_to
     post=db(db.posts.id == request.args[0]).select().first()
     if post.user!=session.user.id and session.user.reputation<20:    return json.dumps({"status":0,"message":"You need atleast 20 rep to comment"})
+    if request.vars["message"]=="":    return json.dumps({"status":0,"message":"An empty comment is un welcome"})
     id = db.comments.insert(
         message = request.vars["message"],
         post = post,
@@ -217,6 +275,7 @@ def new_comment_r():
     path_to=session.path_to
     answer=db(db.answers.id == request.args[0]).select().first()
     if answer.user!=session.user.id and session.user.reputation<20:    return json.dumps({"status":0,"message":"You need atleast 20 rep to comment"})
+    if request.vars["message"]=="":    return json.dumps({"status":0,"message":"An empty comment is un welcome"})
     id = db.comments_r.insert(
         message = request.vars["message"],
         answer = answer,
