@@ -3,28 +3,28 @@
 <table class="master">
     <tr class="answer">
         <td class="vote" id="r{{=answer.id}}">
-            <image class="vicon" id="r{{=answer.id}}v_up" src="{{=path_to['static']}}/images/up{{if answer.v_up and session.user.id in answer.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=1&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
+            <image class="vicon" id="r{{=answer.id}}v_up" src="{{=settings.path_to.static}}/images/up{{if answer.v_up and session.user.id in answer.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=settings.path_to.default}}/vote?up=1&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
             <p id="r{{=answer.id}}v">{{=answer.votes}}</p>
-            <image class="vicon" id="r{{=answer.id}}v_dn" src="{{=path_to['static']}}/images/dn{{if answer.v_dn and session.user.id in answer.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=path_to['default']}}/vote?up=0&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
+            <image class="vicon" id="r{{=answer.id}}v_dn" src="{{=settings.path_to.static}}/images/dn{{if answer.v_dn and session.user.id in answer.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=settings.path_to.default}}/vote?up=0&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
         </td>
         <td class="content">
             <span id="content_r{{=answer.id}}">{{=XML(MARKMIN(answer.message), sanitize=True)}}</span>
-               {{=timedelta(answer.time)}} ago, <a href="{{=path_to['default']}}/user/{{=answer.user}}">{{=db.users(answer.user).name}}({{=db.users(answer.user).reputation}})</a>
+               {{=timedelta(answer.time)}} ago, <a href="{{=settings.path_to.default}}/user/{{=answer.user}}">{{=db.users(answer.user).name}}({{=db.users(answer.user).reputation}})</a>
             </span>
             {{if answer.user==session.user.id:}}<a href="JavaScript:edit_answer('content_r{{=answer.id}}')">Edit</a>{{pass}}
         </td>
     </tr>
 </table>
-<table id="{{=answer.id}}_comments" class="slave">
+<table class="slave"><tbody id="{{=answer.id}}_comments">
     {{if comments_r.has_key(answer.id):}}
     {{comments = comments_r[answer.id]}}
     {{include "default/comments_r_delta.html"}}
     {{pass}}
-</table>
-<form action="{{=path_to['default']}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, '{{=answer.id}}_comments', p)}); return false;">
+</tbody></table>
+<form action="{{=settings.path_to.default}}/new_comment_r/{{=answer.id}}" method="POST" onsubmit="JavaScript:post_form(this, function(s, p){comment(s, '{{=answer.id}}_comments', p)}, function(p,f){f.reset();}, 'loading'); return false;">
     <input type="text" name="message" title="Comment on this answer" /><input type="submit" value="&#x23CE;" title="Add Comment"/>
 </form>
-{{if len(comments_r[answer.id])>=session.delta:}}
+{{if len(comments_r[answer.id])>=settings.delta_comments:}}
 <a href="JavaScript:load_moar_comments_r({{=answer.id}})" id="m_{{=answer.id}}" class="moar">Load More</a>
 {{pass}}
 <hr/>

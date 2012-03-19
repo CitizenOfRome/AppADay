@@ -15,26 +15,27 @@
     }
 </style>
 <div class="new_post">
-    <h4>{{if post:}}Editing <a href="{{=path_to['default']}}/get_post/{{=post.id}}/{{=''.join([x if x in string.letters+string.digits else '_' for x in post.title])}}">This</a> Post:{{else:}}Create A New Post:{{pass}}</h4>
-    <form action="{{=path_to['default']}}/{{if post:}}edit_post/{{=post.id}}{{else:}}new_post{{pass}}" method="POST">
+    <h4>{{if post:}}Editing <a href="{{=settings.path_to.default}}/get_post/{{=post.id}}/{{=''.join([x if x in string.letters+string.digits else '_' for x in post.title])}}">This</a> Post:{{else:}}Create A New Post:{{pass}}</h4>
+    <form action="{{=settings.path_to.default}}/{{if post:}}edit_post/{{=post.id}}{{else:}}new_post{{pass}}" method="POST">
         <h3><input type="text" name="title" value="{{if post:}}{{=post.title}}{{pass}}" /></h3>
         <p><textarea name="message">{{if post:}}{{=post.message}}{{pass}}</textarea></p>
         <span id="sel"></span><br/>
         <input type="text" id="tags" /><input type="button" value="*" title="Click to create a new tag" onclick="new_tag()" style="width:auto" />
         <input type="hidden" id="tagSent" name="tags" />
-        <img id="loading" src="{{=path_to['static']}}/images/loading.gif" style="visibility:hidden;height:15px;width:15px;" />
+        <img id="loading" src="{{=settings.path_to.static}}/images/loading.gif" style="visibility:hidden;height:15px;width:15px;" />
         <p id="sug"></p>
         <input type="submit" value="{{if post:}}Commit Changes{{else:}}Create New Post{{pass}}" />
     </form>
+    <br/><br/><br/><br/><br/><br/><br/><br/>
 </div>
 <script type="text/JavaScript">
-    tags=document.getElementById("tags");
-    tags.onchange = tags.onkeyup = tags.onkeydown = function() {
-        if(tags.value)  window.submit("{{=path_to['default']}}/suggest_tags?tag="+tags.value+"&ptags="+document.getElementById("tagSent").value, suggest_tags, "GET", "", "loading"); 
+    var tags=document.getElementById("tags");
+    tags.onkeyup = tags.onkeydown = function() {
+        if(tags.value!=="")  window.submit("{{=settings.path_to.default}}/suggest_tags?tag="+tags.value+"&ptags="+document.getElementById("tagSent").value, suggest_tags, "GET", "", "loading"); 
         else    document.getElementById("sug").innerHTML = "";
     };
     function new_tag() {
-        submit("{{=path_to['default']}}/suggest_tags?new=1&tag="+tags.value, add_new_tag, "GET", "", "loading");
+        submit("{{=settings.path_to.default}}/suggest_tags?new=1&tag="+tags.value, add_new_tag, "GET", "", "loading");
     }
     function displayBox(message, obj) {
         alert(message);
@@ -48,7 +49,7 @@
         i = 1;
         for(ob in response["tags"]) {
             if(i==4)    res+="</tr><tr>";
-            res+='<td class="tag_box"><a href="#" onclick="add_tag_from_obj(this)"><span class="tag" id="'+response["tags"][ob][2]+'">'+response["tags"][ob][0]+'</span><br/><span class="tag_desc" id="'+response["tags"][ob][2]+'_desc">'+response["tags"][ob][1]+'</span></a></td>';
+            res+='<td class="tag_box"><a href="#sug" onclick="add_tag_from_obj(this)"><span class="tag" id="'+response["tags"][ob][2]+'">'+response["tags"][ob][0]+'</span><br/><span class="tag_desc" id="'+response["tags"][ob][2]+'_desc">'+response["tags"][ob][1]+'</span></a></td>';
             i+=1;
         }
         res += "</tr></table>";
@@ -57,13 +58,18 @@
     //$("#sel")[0].style.position="absolute";
     //$("#sel").offset($("#tags").offset());
     function add_tag(id, tag, desc) {
-        if(document.getElementById('t'+id)) return;
+        if(document.getElementById('t'+id)) {
+            tags.value = "";
+            document.getElementById("sug").innerHTML = "";
+            return true;
+        }
+        document.getElementById("sug").innerHTML = "";
+        tags.value = "";
         var tagSent = document.getElementById("tagSent");
         var prep = tagSent.value?",":"";
         document.getElementById("sel").innerHTML+='<span class="tag" id="t'+id+'">'+tag+'<a href="JavaScript:remove_tag(\'t'+id+'\');">X</a></span> ';
         tagSent.value+=prep+id;
-        document.getElementById("tags").value = "";
-        document.getElementById("sug").innerHTML = "";
+        return true;
     }
     function remove_tag(id) {
         var tag = document.getElementById(id);

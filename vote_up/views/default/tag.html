@@ -1,26 +1,26 @@
 {{extend "layout.html"}}
-<title>{{=tag.name}} on {{=session.app_name}}</title>
-<script type="text/JavaScript">document.title="{{=tag.name}} on {{=session.app_name}}";</script>
+<title>{{=tag.name}} on {{=settings.app_name}}</title>
+<script type="text/JavaScript">document.title="{{=tag.name}} on {{=settings.app_name}}";</script>
 <h2>{{=tag.name}}</h2>
 <p>{{=tag.desc}}</p>
-{{if db.users(tag.user):}}<a href="{{=session.path_to['default']}}/user/{{=tag.user}}">{{=db.users(tag.user).name}}</a>{{pass}}
-<p>{{=tag.time}}</p>
+{{if db.users(tag.user):}}<a href="{{=settings.path_to.default}}/user/{{=tag.user}}">{{=db.users(tag.user).name}}</a>{{pass}}
+<p>{{=timedelta(tag.time)}}</p>
 <hr width="50%"/>
-<link rel="stylesheet" type="text/css" href="{{=session.path_to['static']}}/css/post_table.css" />
+<link rel="stylesheet" type="text/css" href="{{=settings.path_to.static}}/css/post_table.css" />
 <h4>Posts tagged {{=tag.name}}:</h4>
 <table id="moar" class="table">
 {{include "default/main_delta.html"}}
 </table>
-{{if len(posts)>=session.delta:}}
+{{if len(posts)>=settings.delta:}}
 <a href="JavaScript:load_moar()" id="m_moar" class="moar">Load More</a>
 {{pass}}
 <script type="text/JavaScript">
     moar = 0;
-    delta = parseInt({{=session.delta}});
+    delta = parseInt({{=settings.delta}});
     function load_moar() {
         m = document.getElementById("moar");
         plen = m.children.length;
-        return submit("{{=path_to['default']}}/moar?tag="+{{=tag.id}}+"&moar="+parseInt(moar+delta)+"&delta="+delta,
+        return submit("{{=settings.path_to.default}}/moar?tag="+{{=tag.id}}+"&moar="+parseInt(moar+delta)+"&delta="+delta,
             function(s) {
                 if(s!=="") {
                     m.innerHTML+=s;

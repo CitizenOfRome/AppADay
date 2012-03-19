@@ -1,20 +1,20 @@
 {{extend "layout.html"}}
-<link rel="stylesheet" type="text/css" href="{{=session.path_to['static']}}/css/post_table.css" />
+<link rel="stylesheet" type="text/css" href="{{=settings.path_to.static}}/css/post_table.css" />
 <h3>Top Posts:</h3>
 <table id="moar" class="table">
 {{include "default/main_delta.html"}}
 </table>
-{{if len(posts)>=session.delta:}}
+{{if len(posts)>=settings.delta:}}
 <a href="JavaScript:load_moar()" id="m_moar" class="moar">Load More</a>
 {{pass}}
-<img id="loading" src="{{=path_to['static']}}/images/loading.gif" style="visibility:hidden;height:15px;width:15px;" />
+<img id="loading" src="{{=settings.path_to.static}}/images/loading.gif" style="visibility:hidden;height:15px;width:15px;" />
 <script type="text/JavaScript">
     moar = 0;
-    delta = parseInt({{=session.delta}});
+    delta = parseInt({{=settings.delta}});
     function load_moar() {
         m = document.getElementById("moar");
         plen = m.children.length;
-        return submit("{{=path_to['default']}}/moar?post=1&moar="+parseInt(moar+delta)+"&delta="+delta,
+        return submit("{{=settings.path_to.default}}/moar?post=1&moar="+parseInt(moar+delta)+"&delta="+delta,
             function(s) {
                 if(s!=="") {
                     m.innerHTML+=s;

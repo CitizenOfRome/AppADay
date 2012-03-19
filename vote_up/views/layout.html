@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html lang="en">
     <head>
-        <title>{{=session.app_name}}</title>
+        <title>{{=settings.app_name}}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="Content-Language" content="EN" />
         <meta name="keywords" content="vote up" />
-        <link rel="shortcut icon" href="{{=session.path_to['static']}}/images/like-button.png" />
-        <link rel="stylesheet" type="text/css" href="{{=session.path_to['static']}}/css/reset.css" />
-        <link rel="stylesheet" type="text/css" href="{{=session.path_to['static']}}/css/gradient.css" />
+        <link rel="shortcut icon" href="{{=settings.path_to.static}}/images/like-button.png" />
+        <link rel="stylesheet" type="text/css" href="{{=settings.path_to.static}}/css/reset.css" />
+        <link rel="stylesheet" type="text/css" href="{{=settings.path_to.static}}/css/gradient.css" />
         <style type="text/css">
             body {
                height:100%;
@@ -23,7 +23,8 @@
             }
             a {
                 color:inherit;
-               color: #050542;
+                color: #252562;
+                background-color:ghostwhite;
                 text-decoration:inherit;
             }
             a:hover {
@@ -44,18 +45,18 @@
         <script type="text/JavaScript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script type="text/JavaScript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
         <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css" />-->
-        <script type="text/JavaScript" src="{{=session.path_to['static']}}/js/XHRSubmit.js"></script>
+        <script type="text/JavaScript" src="{{=settings.path_to.static}}/js/XHRSubmit.js"></script>
     </head>
     <body class=".ui-widget">
         <header class=".ui-widget-header">
             {{if session.user:}}
             <table style="float:right;font-size:135%;padding:5px;"><tr>
-                <td><a href="{{=session.path_to['default']}}/new_post">New Post</a></td>
-                <td><a href="{{=session.path_to['default']}}/user">{{=session.user.name}}({{=session.user.reputation}})</a></td>
-                <td><a href="{{=session.path_to['default']}}/auth">Logout</a><br/></td>
+                <td><a href="{{=settings.path_to.default}}/new_post">New Post</a></td>
+                <td><a href="{{=settings.path_to.default}}/user">{{=session.user.name}}({{=session.user.reputation}})</a></td>
+                <td><a href="{{=settings.path_to.default}}/auth">Logout</a><br/></td>
             </tr></table>
             {{pass}}
-            <h1 data-role="header"><a href="{{=session.path_to['default']}}">{{=session.app_name}}</a></h1>
+            <h1 data-role="header"><a href="{{=settings.path_to.default}}">{{=settings.app_name}}</a></h1>
         </header>
         <span class=".ui-widget-content">
         {{include}}

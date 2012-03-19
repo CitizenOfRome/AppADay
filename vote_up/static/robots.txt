@@ -1,2 +1,2 @@
 User-agent: *
-Disallow: /codepad/default/user
+Disallow: /vote_up/default/user

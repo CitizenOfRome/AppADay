@@ -2,16 +2,16 @@
 
 <tr class="post">
     <td class="vote" style="text-align:center;">{{=post.votes}}</td>
-    <th class="title" colspan="3"><a href="{{=path_to['default']}}/get_post/{{=post.id}}/{{=''.join([x if x in string.letters+string.digits else '_' for x in post.title])}}" title="{{=post.message[:session.title_length]}}{{if len(post.message)>session.title_length:}}...{{pass}}">{{=post.title}}</a></th>
+    <th class="title" colspan="3"><a href="{{=settings.path_to.default}}/get_post/{{=post.id}}/{{=''.join([x if x in string.letters+string.digits else '_' for x in post.title])}}" title="{{=post.message[:settings.title_length]}}{{if len(post.message)>settings.title_length:}}...{{pass}}">{{=post.title}}</a></th>
 </tr><tr>
     <td></td>
     <td>{{tags = post.tags}}
     {{if not tags: tags=[]}}
     {{for tag in tags:}}
-        <a href="{{=path_to['default']}}/tag/{{=str(tag)}}">{{=db.tags(tag).name}}</a>
+        <a href="{{=settings.path_to.default}}/tag/{{=str(tag)}}">{{=db.tags(tag).name}}</a>
     {{pass}}</td>
-    <td><a href="{{=path_to['default']}}/get_post/{{=post.id}}">{{=timedelta(post.time)}} ago</a></td>
-    <td class="name"><a href="{{=path_to['default']}}/user/{{=post.user}}">{{=db.users(post.user).name}}({{=db.users[post.user].reputation}})</a></td>
+    <td><a href="{{=settings.path_to.default}}/get_post/{{=post.id}}">{{=timedelta(post.time)}} ago</a></td>
+    <td class="name"><a href="{{=settings.path_to.default}}/user/{{=post.user}}">{{=db.users(post.user).name}}({{=db.users[post.user].reputation}})</a></td>
 </tr>
 <tr><td></td></tr>
 {{pass}}
