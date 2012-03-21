@@ -1,6 +1,6 @@
 {{if answers!=None:}}
 {{for answer in answers:}}
-<table class="master">
+<table class="master"><tbody>
     <tr class="answer">
         <td class="vote" id="r{{=answer.id}}">
             <image class="vicon" id="r{{=answer.id}}v_up" src="{{=settings.path_to.static}}/images/up{{if answer.v_up and session.user.id in answer.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=settings.path_to.default}}/vote?up=1&answer={{=answer.id}}', function(votes){vote(votes, 'r{{=answer.id}}')})" />
@@ -14,7 +14,7 @@
             {{if answer.user==session.user.id:}}<a href="JavaScript:edit_answer('content_r{{=answer.id}}')">Edit</a>{{pass}}
         </td>
     </tr>
-</table>
+</tbody></table>
 <table class="slave"><tbody id="{{=answer.id}}_comments">
     {{if comments_r.has_key(answer.id):}}
     {{comments = comments_r[answer.id]}}

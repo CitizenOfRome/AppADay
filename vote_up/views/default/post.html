@@ -93,7 +93,6 @@
     <a href="JavaScript:load_moar_comments()" id="m_comments" class="moar">Load More</a>
     {{pass}}
     <hr/>
-    {{=XML(ans, sanitize=False)}}
     {{include "default/post_delta.html"}}
     <span id="master"></span>
     {{if len(answers)>=settings.delta:}}
@@ -110,7 +109,11 @@
 <script type="text/JavaScript">
     user = "{{=session.user.name}}";
     rep = {{=session.user.reputation}};
-    get_response_from_hash=function (hash) {
+    {{if ans:}}
+    if(!document.getElementById("r{{=ans}}"))submit("{{=settings.path_to.default}}/get_by_id?answer={{=ans}}", function(s) { document.getElementById("master").innerHTML+=s; document.getElementById("r{{=ans}}").scrollIntoView(true); }, "GET", "", "loading");
+    else document.getElementById("r{{=ans}}").scrollIntoView(true);
+    {{pass}}
+    /*get_response_from_hash=function (hash) {
         hash = hash||window.location.hash;
         hash = hash.substring(1);
         if(hash && !document.getElementById(hash)) {
@@ -122,7 +125,7 @@
             }
         }
     };
-    get_response_from_hash();
+    get_response_from_hash();*/
     function displayBox(message, obj) {
         alert(message);
     }

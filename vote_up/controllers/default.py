@@ -1,4 +1,4 @@
-#TODO:Edit, Search, UI (Draw it first!), ID-ref-comments, Convert to FW
+#TODO: Search, ID-ref-comments, Convert to FW
 
 def index():
     '''Display the list of posts'''
@@ -11,14 +11,14 @@ def get_post():
     if not session.user: redirect(settings.path_to.default+"/auth")
     post=db(db.posts.id == request.args[0]).select().first()
     try:
-        request.vars["answer"] = int(request.args[1])
-        ans = get_by_id()
-    except (IndexError,ValueError):
+        if db.answers(request.args[1]).post==post.id: ans = int(request.args[1])
+        else:   ans = None
+    except (IndexError, ValueError, AttributeError):
         try:
-            request.vars["answer"] = int(request.args[2])
-            ans = get_by_id()
-        except (IndexError,ValueError):
-            ans = ""
+            if db.answers(request.args[2]).post==post.id: ans = int(request.args[2])
+            else:   ans = None
+        except (IndexError,ValueError, AttributeError):
+            ans = None
     answers=db(db.answers.post == post).select(orderby=settings.sel.answers, limitby=(0, settings.delta))
     comments=db(db.comments.post == post).select(orderby=settings.sel.comments, limitby=(0, settings.delta_comments))
     comments_r = {}
@@ -370,3 +370,8 @@ def auth():
         session.user = None
         redirect(settings.path_to.default)
     return response.render('default/auth.html', locals())
+    
+def sitemap():
+    '''Generate Sitemap.xml'''
+    
+    pass

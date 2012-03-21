@@ -10,12 +10,12 @@
 <pre>
     Posts:
     {{for post in db(db.posts.user==user.id).select():}}
-        <a href="{{=settings.path_to.default}}/get_post/{{=post.id}}" title="{{=post.message[:settings.title_length]}}{{if len(post.message)>settings.title_length:}}...{{pass}}" >{{=post.title}} {{=post.votes}} </a>
+        <a href="{{=settings.path_to.default}}/get_post/{{=post.id}}/{{=''.join([x if x in string.letters+string.digits else '_' for x in post.title])}}" title="{{=post.message[:settings.title_length]}}{{if len(post.message)>settings.title_length:}}...{{pass}}" >{{=post.title}} {{=post.votes}} </a>
     {{pass}}
 </pre>
 <pre>
     Answers:
     {{for var in db(db.answers.user==user.id).select():}}
-        <a href="{{=settings.path_to.default}}/get_post/{{=var.post.id}}#r{{=var.id}}" title="{{=var.message[:settings.title_length]}}{{if len(var.message)>settings.title_length:}}...{{pass}}" >{{=var.post.title}} {{=var.votes}} </a>
+        <a href="{{=settings.path_to.default}}/get_post/{{=var.post.id}}/{{=''.join([x if x in string.letters+string.digits else '_' for x in var.post.title])}}/{{=var.id}}" title="{{=var.message[:settings.title_length]}}{{if len(var.message)>settings.title_length:}}...{{pass}}" >{{=var.post.title}} {{=var.votes}} </a>
     {{pass}}
 </pre>
