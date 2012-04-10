@@ -2,8 +2,8 @@
 
 <tr class="post">
     <td class="vote" style="text-align:center;">{{=post.votes}}</td>
-    <th class="title" colspan="3"><a href="{{=settings.path_to.default}}/get_post/{{=post.id}}/{{=''.join([x if x in string.letters+string.digits else '_' for x in post.title])}}" title="{{=post.message[:settings.title_length]}}{{if len(post.message)>settings.title_length:}}...{{pass}}">{{=post.title}}</a></th>
-</tr><tr>
+    <th class="title" colspan="3"><a href="{{=settings.path_to.default}}/get_post/{{=post.id}}/{{=''.join([x if x in settings.taggable else '_' for x in post.title])}}" title="{{=post.message[:settings.title_length]}}{{if len(post.message)>settings.title_length:}}...{{pass}}">{{=post.title}}</a></th>
+</tr><tr class="post">
     <td style="text-align:center;">Votes</td>
     <td>{{tags = post.tags}}
     {{if not tags: tags=[]}}

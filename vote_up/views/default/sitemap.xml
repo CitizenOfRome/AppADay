@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>{{=settings.path_to.default}}</loc>
+        {{if False:}}
+        <lastmod></lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+        {{pass}}
+    </url>
+{{for post in posts:}}
+    <url>
+        <loc>{{=settings.path_to.default}}/get_post/{{=post.id}}/{{=''.join([x if x in settings.taggable else '_' for x in post.title])}}</loc>
+        <lastmod>{{=post.time}}</lastmod>
+        {{if False:}}
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+        {{pass}}
+    </url>
+{{pass}}
+</urlset>

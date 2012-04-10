@@ -6,7 +6,6 @@
 {{if db.users(tag.user):}}<a href="{{=settings.path_to.default}}/user/{{=tag.user}}">{{=db.users(tag.user).name}}</a>{{pass}}
 <p>{{=timedelta(tag.time)}}</p>
 <hr width="50%"/>
-<link rel="stylesheet" type="text/css" href="{{=settings.path_to.static}}/css/post_table.css" />
 <h4>Posts tagged {{=tag.name}}:</h4>
 <table id="moar" class="table">
 {{include "default/main_delta.html"}}

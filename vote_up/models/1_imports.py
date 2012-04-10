@@ -35,5 +35,3 @@ def timedelta(frm, to=datetime.utcnow()):
     return str(det)+" second"+s
 import string
 import hashlib
-if session.user:    user_id=session.user.id
-else: user_id=None

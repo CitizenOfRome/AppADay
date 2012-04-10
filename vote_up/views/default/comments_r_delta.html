@@ -5,8 +5,8 @@
         <table><tr>
             <td id="r{{=answer.id}}_{{=comment.id}}v">{{=comment.votes}}</td>
             <td>
-                <image class="vicon_c" id="r{{=answer.id}}_{{=comment.id}}v_up" src="{{=settings.path_to.static}}/images/up{{if comment.v_up and session.user.id in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=settings.path_to.default}}/vote?up=1&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
-                <image class="vicon_c" id="r{{=answer.id}}_{{=comment.id}}v_dn" src="{{=settings.path_to.static}}/images/dn{{if comment.v_dn and session.user.id in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=settings.path_to.default}}/vote?up=0&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
+                <image class="vicon_c" id="r{{=answer.id}}_{{=comment.id}}v_up" src="{{=settings.path_to.static}}/images/up{{if comment.v_up and session.user in comment.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=settings.path_to.default}}/vote?up=1&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
+                <image class="vicon_c" id="r{{=answer.id}}_{{=comment.id}}v_dn" src="{{=settings.path_to.static}}/images/dn{{if comment.v_dn and session.user in comment.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=settings.path_to.default}}/vote?up=0&comment_r={{=comment.id}}', function(votes){vote(votes, 'r{{=answer.id}}_{{=comment.id}}')})" />
             </td>
         </tr></table>
     </td>

@@ -1,9 +1,10 @@
 db.define_table('tags',
     db.Field('name', 'string'),
     db.Field('desc', 'text', default=""),
-    db.Field('user', 'reference users', default=user_id),
+    db.Field('user', 'reference users', default=session.user),
     db.Field('time', 'datetime', default=datetime.utcnow())
 )
+
 
 db.define_table('posts', 
     db.Field('title', 'string'),
@@ -50,3 +51,6 @@ db.define_table('users',
     db.Field('joined', 'datetime', default=datetime.utcnow())
 )
     
+    
+if not db(db.tags.name == "meta").select().first():
+    db.tags.insert(name="meta", desc="Meta is the place to discuss about the platform itself. All posts tagged 'meta' are listed here.")

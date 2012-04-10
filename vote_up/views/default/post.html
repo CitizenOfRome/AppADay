@@ -63,14 +63,14 @@
     <table class="master" width="100%">
         <tr class="post">
             <td class="vote" id="{{=post.id}}">
-                <image class="vicon" id="{{=post.id}}v_up" src="{{=settings.path_to.static}}/images/up{{if post.v_up and session.user.id in post.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=settings.path_to.default}}/vote?up=1&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')}, 'GET', '', 'loading')" />
+                <image class="vicon" id="{{=post.id}}v_up" src="{{=settings.path_to.static}}/images/up{{if post.v_up and session.user in post.v_up:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=settings.path_to.default}}/vote?up=1&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')}, 'GET', '', 'loading')" />
                 <p id="{{=post.id}}v">{{=post.votes}}</p>
-                <image class="vicon" id="{{=post.id}}v_dn" src="{{=settings.path_to.static}}/images/dn{{if post.v_dn and session.user.id in post.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=settings.path_to.default}}/vote?up=0&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')}, 'GET', '', 'loading')" />
+                <image class="vicon" id="{{=post.id}}v_dn" src="{{=settings.path_to.static}}/images/dn{{if post.v_dn and session.user in post.v_dn:}}{{='_h'}}{{pass}}.png" onclick="submit('{{=settings.path_to.default}}/vote?up=0&post={{=post.id}}', function(votes){vote(votes, '{{=post.id}}')}, 'GET', '', 'loading')" />
             </td>
             <td class="content">
                 <p>{{=XML(MARKMIN(post.message), sanitize=True)}}</p>
                 <table width="100%">
-                {{if post.user==session.user.id:}}<tr><td><a href="{{=settings.path_to.default}}/edit_post/{{=post.id}}">Edit</a></td></tr>{{pass}}
+                {{if post.user==session.user:}}<tr><td><a href="{{=settings.path_to.default}}/edit_post/{{=post.id}}">Edit</a></td></tr>{{pass}}
                 <tr width="100%">
                 <td width="50%">{{tags = post.tags}}
                 {{if not tags:}}{{tags=[]}}<a href="{{=settings.path_to.default}}/tag/misc">UnCategorized</a>{{pass}}
@@ -107,13 +107,13 @@
 </div>
 <img id="loading" src="{{=settings.path_to.static}}/images/loading.gif" style="visibility:hidden;height:15px;width:15px;position:fixed;top:50%;left:50%;" />
 <script type="text/JavaScript">
-    user = "{{=session.user.name}}";
-    rep = {{=session.user.reputation}};
+    user = "{{=db.users(session.user).name}}";
+    rep = {{=db.users(session.user).reputation}};
     {{if ans:}}
     if(!document.getElementById("r{{=ans}}"))submit("{{=settings.path_to.default}}/get_by_id?answer={{=ans}}", function(s) { document.getElementById("master").innerHTML+=s; document.getElementById("r{{=ans}}").scrollIntoView(true); }, "GET", "", "loading");
     else document.getElementById("r{{=ans}}").scrollIntoView(true);
     {{pass}}
-    /*get_response_from_hash=function (hash) {
+    get_response_from_hash=function (hash) {
         hash = hash||window.location.hash;
         hash = hash.substring(1);
         if(hash && !document.getElementById(hash)) {
@@ -124,8 +124,8 @@
                 submit("{{=settings.path_to.default}}/get_by_id?comment_r="+hash.substring(hash.indexOf("_")+1), function(s) {}, "GET", "", "loading");
             }
         }
-    };
-    get_response_from_hash();*/
+    };//Used in new_answers
+    /*get_response_from_hash();*/
     function displayBox(message, obj) {
         alert(message);
     }

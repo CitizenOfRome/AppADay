@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>{{=settings.app_name}}</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="Content-Language" content="EN" />
+        <meta name="keywords" content="vote up" />
+        <link rel="shortcut icon" href="{{=settings.path_to.static}}/images/like-button.png" />
+        <link rel="stylesheet" type="text/css" href="{{=settings.path_to.static}}/css/reset.css" />
+        <link rel="stylesheet" type="text/css" href="{{=settings.path_to.static}}/css/gradient.css" />
+        <style type="text/css">
+            body {
+               height:100%;
+               width:94%;
+               font-family:Perpetua, Georgia, Consolas;
+               min-height:600px;
+               min-width:800px;
+               position: absolute;
+               top:0%;
+               left:3%;
+               color: #020232;
+               font-size:108%;
+               background-image: url('http://subtlepatterns.com/patterns/snow.png');
+            }
+            header {
+               background-image: url('http://subtlepatterns.com/patterns/daimond_eyes.png');
+            }
+            a {
+                color:inherit;
+                color: #252562;
+                text-decoration:inherit;
+            }
+            a:hover {
+                text-decoration:underline;
+                color: #4545132;
+            }
+            hr{
+                display: block; height: 1px;
+                border: 0; border-top: 1px solid darkgrey;
+                margin: 1em 0; padding: 0;
+                visibility:hidden;
+            }
+            tr, td, th {
+                padding:5px;
+            }
+        </style>
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1"> 
+        <script type="text/JavaScript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/JavaScript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css" />-->
+        <script type="text/JavaScript" src="{{=settings.path_to.static}}/js/XHRSubmit.js"></script>
+    </head>
+    <body>
+        <header>
+            {{if db.users(session.user):}}
+            <table style="float:right;font-size:135%;padding:5px;"><tr>
+                <td><a href="{{=settings.path_to.default}}/new_post">New Post</a></td>
+                <td><a href="{{=settings.path_to.default}}/user">{{=db.users(session.user).name}}({{=db.users(session.user).reputation}})</a></td>
+                <td><a href="{{=settings.path_to.default}}/auth">Logout</a><br/></td>
+            </tr></table>
+            {{pass}}
+            <h1 data-role="header"><a href="{{=settings.path_to.default}}">{{=settings.app_name}}</a></h1>
+        </header>
+        <span>
+        {{include}}
+        </span>
+    </body>
+</html>

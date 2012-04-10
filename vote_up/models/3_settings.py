@@ -22,6 +22,7 @@ settings.max_tags = 5 # Max tags allowed in a post
 # Selection-OrderBy Criteria
 settings.sel = Storage()
 settings.sel.posts = (~db.posts.votes)
+settings.sel.posts_time = (~db.posts.time)
 settings.sel.answers = (~db.answers.votes)
 settings.sel.comments = (~db.comments.votes)
 settings.sel.comments_r = (~db.comments_r.votes)

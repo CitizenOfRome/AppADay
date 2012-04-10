@@ -19,3 +19,4 @@
         <a href="{{=settings.path_to.default}}/get_post/{{=var.post.id}}/{{=''.join([x if x in string.letters+string.digits else '_' for x in var.post.title])}}/{{=var.id}}" title="{{=var.message[:settings.title_length]}}{{if len(var.message)>settings.title_length:}}...{{pass}}" >{{=var.post.title}} {{=var.votes}} </a>
     {{pass}}
 </pre>
+<!--NEED TO FIX THIS UP-->

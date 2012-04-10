@@ -1,65 +1,84 @@
-<!DOCTYPE HTML>
-<html lang="en">
-    <head>
-        <title>{{=settings.app_name}}</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta http-equiv="Content-Language" content="EN" />
-        <meta name="keywords" content="vote up" />
-        <link rel="shortcut icon" href="{{=settings.path_to.static}}/images/like-button.png" />
-        <link rel="stylesheet" type="text/css" href="{{=settings.path_to.static}}/css/reset.css" />
-        <link rel="stylesheet" type="text/css" href="{{=settings.path_to.static}}/css/gradient.css" />
-        <style type="text/css">
-            body {
-               height:100%;
-               width:94%;
-               font-family:Perpetua, Georgia, Consolas;
-               min-height:600px;
-               min-width:800px;
-               position: absolute;
-               top:0%;
-               left:3%;
-               color: #020232;
-               font-size:108%;
-            }
-            a {
-                color:inherit;
-                color: #252562;
-                background-color:ghostwhite;
-                text-decoration:inherit;
-            }
-            a:hover {
-                text-decoration:underline;
-                color: #4545132;
-            }
-            hr{
-                display: block; height: 1px;
-                border: 0; border-top: 1px solid darkgrey;
-                margin: 1em 0; padding: 0;
-                visibility:hidden;
-            }
-            tr, td, th {
-                padding:5px;
-            }
-        </style>
-        <!--<meta name="viewport" content="width=device-width, initial-scale=1"> 
-        <script type="text/JavaScript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-        <script type="text/JavaScript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css" />-->
-        <script type="text/JavaScript" src="{{=settings.path_to.static}}/js/XHRSubmit.js"></script>
-    </head>
-    <body class=".ui-widget">
-        <header class=".ui-widget-header">
-            {{if session.user:}}
-            <table style="float:right;font-size:135%;padding:5px;"><tr>
-                <td><a href="{{=settings.path_to.default}}/new_post">New Post</a></td>
-                <td><a href="{{=settings.path_to.default}}/user">{{=session.user.name}}({{=session.user.reputation}})</a></td>
-                <td><a href="{{=settings.path_to.default}}/auth">Logout</a><br/></td>
-            </tr></table>
-            {{pass}}
-            <h1 data-role="header"><a href="{{=settings.path_to.default}}">{{=settings.app_name}}</a></h1>
-        </header>
-        <span class=".ui-widget-content">
-        {{include}}
-        </span>
-    </body>
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!-- Consider adding a manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/i/378 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>{{=settings.app_name}}</title>
+  <meta name="description" content="">
+
+  <!-- Mobile viewport optimized: h5bp.com/viewport -->
+  <meta name="viewport" content="width=device-width">
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+  <link rel="stylesheet" type="text/css" href="{{=settings.path_to.static}}/css/gradient.css" />
+
+  <link rel="stylesheet" href="{{=settings.path_to.static}}/css/style.css">
+
+  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
+  <link rel="shortcut icon" href="{{=settings.path_to.static}}/images/like-button.png" />
+
+  <!-- All JavaScript at the bottom, except this Modernizr build.
+       Modernizr enables HTML5 elements & feature detects for optimal performance.
+       Create your own custom Modernizr build: www.modernizr.com/download/ -->
+  <script src="{{=settings.path_to.static}}/js/libs/modernizr-2.5.3.min.js"></script>
+</head>
+<body>
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+  <header>
+    <table class="table"><tbody><tr>
+        <th><h1 data-role="header"><a href="{{=settings.path_to.default}}">{{=settings.app_name}}</a></h1></th>
+    {{if db.users(session.user):}}
+        <td><table style="float:right;font-size:135%;padding:5px;"><tbody><tr>
+            <td><a href="{{=settings.path_to.default}}/tag/meta">Meta</a></td>
+            <td><a href="{{=settings.path_to.default}}/new_post">New Post</a></td>
+            <td><a href="{{=settings.path_to.default}}/user">{{=db.users(session.user).name}}({{=db.users(session.user).reputation}})</a></td>
+            <td><a href="{{=settings.path_to.default}}/auth">Logout</a><br/></td>
+        </tr></tbody></table></td>
+    {{pass}}
+    </tr></tbody></table>
+  </header>
+  <br/>
+  <div role="main" class="main">
+    <br/>
+    {{include}}
+    <br/>
+  </div>
+  <br/>
+  <footer>
+    CC-By-NC-SA Sathvik Ponangi
+  </footer>
+
+
+  <!-- JavaScript at the bottom for fast page loading -->
+  <script type="text/JavaScript" src="{{=settings.path_to.static}}/js/XHRSubmit.js"></script>
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="{{=settings.path_to.static}}/js/libs/jquery-1.7.1.min.js"><\/script>')</script>
+
+  <!-- scripts concatenated and minified via build script -->
+  <script src="{{=settings.path_to.static}}/js/plugins.js"></script>
+  <script src="{{=settings.path_to.static}}/js/script.js"></script>
+  <!-- end scripts -->
+
+  <!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID.
+       mathiasbynens.be/notes/async-analytics-snippet -->
+  <script>
+    var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+</body>
 </html>
