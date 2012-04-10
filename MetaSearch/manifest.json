@@ -1,0 +1,11 @@
+{
+  "name": "MetaSearch",
+  "description": "Searches a site by keyword. E.g. '! d abc' to search DuckDuckGo for 'abc'.",
+  "version": "1.0",
+  "background_page": "background.html",
+  "omnibox": { "keyword" : "!" },
+  "permissions": [
+    "tabs", "http://*/*",
+    "tabs", "https://*/*"
+  ]
+}

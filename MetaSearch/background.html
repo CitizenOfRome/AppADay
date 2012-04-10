@@ -1,0 +1,56 @@
+<script type="text/JavaScript">
+chrome.omnibox.onInputChanged.addListener(
+  function(text, suggest) {
+    words = text.split(" ");
+    engine = words[0].toLowerCase();
+    query = words.splice(1).join(" ");
+    switch(engine) {
+        default:
+        case "d":
+        case "ddg":
+        case "duckduckgo":
+            eng = "DuckDuckGo";
+        break;
+        case "g":
+        case "goog":
+        case "google":
+            eng = "Google";
+        break;
+        case "w":
+        case "wikipedia":
+            eng = "Wikipedia";
+        break;
+    }
+    suggest([{content: text, description: "Search "+eng+" for "+query}]);
+  }
+);
+
+// This event is fired with the user accepts the input in the omnibox.
+chrome.omnibox.onInputEntered.addListener(
+  function(text) {
+    //console.log('inputEntered: ' + text);
+    words = text.split(" ");
+    engine = words[0];
+    query = encodeURI(words.splice(1).join(" "));
+    switch(engine) {
+        default:
+        case "d":
+        case "ddg":
+        case "duckduckgo":
+            search = "https://duckduckgo.com/?kg=p&kh=1&kl=wt-wt&kp=-1&q="+query;
+        break;
+        case "g":
+        case "goog":
+        case "google":
+            search = "https://www.google.com/search?q="+query+"&ie=utf-8&oe=utf-8&aq=t";
+        break;
+        case "w":
+        case "wikipedia":
+            search = "http://en.wikipedia.org/wiki/Special:Search?search="+query;
+        break;
+    }
+    chrome.tabs.executeScript(null, {code:"window.location='"+search+"';"});
+  }
+);
+
+</script>
