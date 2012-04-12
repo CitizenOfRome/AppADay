@@ -1,5 +1,10 @@
 settings = Storage()
 
+settings.meta_id = db(db.tags.name == "meta").select().first()
+if not settings.meta_id:
+    settings.meta_id = db.tags.insert(name="meta", desc="Meta is the place to discuss about the platform itself. All posts tagged 'meta' are listed here.")
+else: settings.meta_id = settings.meta_id.id #To prevent a none-obj=>no-attrb error
+
 #paths
 settings.path_to = Storage()
 settings.path_to.static = "/"+request.application+"/static"

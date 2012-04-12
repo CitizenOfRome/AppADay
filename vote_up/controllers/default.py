@@ -1,14 +1,19 @@
-#TODO: Profiles, Meta, Search, ID-ref-comments, Convert to FW
-#db.users(session.user) is archival
+#TODO: Popularity algo, Metrics, Profiles, Envites, E-Notif, Search, ID-ref-comments
 
 def index():
     '''Display the list of posts'''
     if not db.users(session.user): redirect(settings.path_to.default+"/auth")
-    try:
-        not_meta = ~db.posts.tags.contains(db(db.tags.name=="meta").select().first().id)
-        posts=db(db.posts).select(not_meta, orderby=settings.sel.posts, limitby=(0, settings.delta))
-    except AttributeError:
-        posts=db(db.posts).select(orderby=settings.sel.posts, limitby=(0, settings.delta))
+    meta = db.posts.tags.contains(settings.meta_id)
+    all=db(db.posts).select(orderby=settings.sel.posts)#, limitby=(0, settings.delta)
+    meta=db(meta).select(orderby=settings.sel.posts)
+    posts = []
+    i = 0
+    for post in all:
+        if i==settings.delta: break
+        if post in meta: continue
+        else:
+            posts.append(post)
+            i += 1
     return response.render('default/main.html', locals())
     
 def get_post():
@@ -275,17 +280,23 @@ def vote():
     '''Add a vote'''
     if not db.users(session.user):    return json.dumps({"votes":0, "status":0, "message":"You must be logged on to post"})
     factor = 0
+    is_meta = False
+    message = ""
     if request.vars["post"]:
         var = db(db.posts.id == request.vars["post"]).select().first()
+        if settings.meta_id in var.tags: is_meta = True
         factor=5
     elif request.vars["answer"]:
         var = db(db.answers.id == request.vars["answer"]).select().first()
+        if settings.meta_id in var.post.tags: is_meta = True
         factor=10
     elif request.vars["comment"]:
         var = db(db.comments.id == request.vars["comment"]).select().first()
+        if settings.meta_id in var.post.tags: is_meta = True
         factor=2
     elif request.vars["comment_r"]:
         var = db(db.comments_r.id == request.vars["comment_r"]).select().first()
+        if settings.meta_id in var.answer.post.tags: is_meta = True
         factor=2
     else: return None
     user = db.users(var.user)
@@ -326,10 +337,12 @@ def vote():
             v_dn = var.v_dn+add,
             v_up = var.v_up
         )
-    user.update_record(
-        reputation = user.reputation+(inc+in2)*factor
-    )
-    return json.dumps({"votes":var.votes, "status":inc})
+    if not is_meta:
+        user.update_record(
+            reputation = user.reputation+(inc+in2)*factor
+        )
+        message = "Stuff in meta carries no rep"
+    return json.dumps({"votes":var.votes, "status":inc, "message":message})
 
 def user():
     '''Display user-Profile'''

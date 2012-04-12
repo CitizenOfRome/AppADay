@@ -50,7 +50,7 @@ db.define_table('users',
     db.Field('reputation', 'integer', default=0),
     db.Field('joined', 'datetime', default=datetime.utcnow())
 )
-    
-    
-if not db(db.tags.name == "meta").select().first():
-    db.tags.insert(name="meta", desc="Meta is the place to discuss about the platform itself. All posts tagged 'meta' are listed here.")
+
+db.define_table('related_posts',
+    db.Field('posts', 'list:reference posts')
+) #Holds sets of related/similar posts
